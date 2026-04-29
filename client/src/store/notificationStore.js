@@ -1,0 +1,21 @@
+import { create } from 'zustand';
+
+export const useNotificationStore = create((set, get) => ({
+  notifications: [],
+  unreadCount: 0,
+
+  addNotification: (notification) => {
+    set(state => ({
+      notifications: [notification, ...state.notifications].slice(0, 50),
+      unreadCount: state.unreadCount + 1
+    }));
+  },
+
+  markAsRead: () => {
+    set({ unreadCount: 0 });
+  },
+
+  clearNotifications: () => {
+    set({ notifications: [], unreadCount: 0 });
+  }
+}));

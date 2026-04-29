@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+/* Styles moved out of @layer for compatibility */
+:root {
+    /* ═══ TYPOGRAPHY ═══ */
+    --font-ui:      'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Outfit', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+
+    /* ═══ FONT SCALE ═══ */
+    --text-xs:   11px;
+    --text-sm:   12px;
+    --text-base: 13px;
+    --text-md:   14px;
+    --text-lg:   16px;
+    --text-xl:   18px;
+    --text-2xl:  22px;
+    --text-3xl:  28px;
+    --text-4xl:  36px;
+
+    /* ═══ FONT WEIGHTS ═══ */
+    --fw-normal:   400;
+    --fw-medium:   500;
+    --fw-semibold: 600;
+    --fw-bold:     700;
+
+    /* ═══ COLOR SYSTEM ═══ */
+    /* Sidebar - Deep Navy */
+    --sidebar-bg:         #0C1117;
+    --sidebar-border:     rgba(255,255,255,0.06);
+    --sidebar-hover:      rgba(255,255,255,0.05);
+    --sidebar-active:     rgba(255,255,255,0.09);
+    --sidebar-text:       #8B9AA8;
+    --sidebar-text-hover: #C4CDD6;
+    --sidebar-text-active:#FFFFFF;
+    --sidebar-icon:       #5A6878;
+    --sidebar-icon-active:#22C55E;
+
+    /* Page Canvas */
+    --admin-bg:         #F4F6F8;
+    --admin-surface:    #FFFFFF;
+    --admin-surface-2:  #F9FAFB;
+    --admin-border:     #E4E7EC;
+    --admin-border-2:   #EDF0F3;
+
+    /* Text */
+    --admin-text-primary:   #0D1117;
+    --admin-text-secondary: #5A6878;
+    --admin-text-tertiary:  #8B9AA8;
+    --admin-text-inverse:   #FFFFFF;
+
+    /* Brand */
+    --brand-green:     #16A34A;
+    --brand-green-lt:  #22C55E;
+    --brand-green-50:  #F0FDF4;
+    --brand-green-100: #DCFCE7;
+    --brand-green-200: #BBF7D0;
+
+    /* Status */
+    --status-pending:    #F59E0B;
+    --status-confirmed:  #3B82F6;
+    --status-packed:     #8B5CF6;
+    --status-delivery:   #F97316;
+    --status-delivered:  #22C55E;
+    --status-cancelled:  #EF4444;
+    --status-rx-pending: #EC4899;
+
+    /* Semantic */
+    --success:  #16A34A;
+    --warning:  #D97706;
+    --danger:   #DC2626;
+    --info:     #2563EB;
+
+    /* Interactive */
+    --focus-ring: rgba(22,163,74,0.25);
+
+    /* ═══ SHADOW SYSTEM ═══ */
+    --shadow-xs: 0 1px 2px rgba(13,17,23,0.04);
+    --shadow-sm: 0 1px 3px rgba(13,17,23,0.08), 0 1px 2px rgba(13,17,23,0.04);
+    --shadow-md: 0 4px 8px rgba(13,17,23,0.06), 0 2px 4px rgba(13,17,23,0.04);
+    --shadow-lg: 0 12px 24px rgba(13,17,23,0.08), 0 4px 8px rgba(13,17,23,0.04);
+    --shadow-xl: 0 24px 48px rgba(13,17,23,0.10), 0 8px 16px rgba(13,17,23,0.06);
+    --shadow-card: 0 1px 3px rgba(13,17,23,0.08), 0 0 0 1px rgba(13,17,23,0.04);
+    --shadow-dropdown: 0 8px 24px rgba(13,17,23,0.12), 0 0 0 1px rgba(13,17,23,0.06);
+    --shadow-modal: 0 32px 64px rgba(13,17,23,0.18);
+
+    /* ═══ BORDER RADIUS ═══ */
+    --radius-xs:   4px;
+    --radius-sm:   6px;
+    --radius-md:   8px;
+    --radius-lg:   10px;
+    --radius-xl:   12px;
+    --radius-2xl:  16px;
+    --radius-3xl:  20px;
+    --radius-full: 9999px;
+
+    /* ═══ SPACING ═══ */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  20px;
+    --space-6:  24px;
+    --space-8:  32px;
+    --space-10: 40px;
+    --space-12: 48px;
+
+    /* ═══ TRANSITIONS ═══ */
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --duration-fast: 120ms;
+    --duration-base: 200ms;
+    --duration-slow: 350ms;
+  }
+
+  body {
+    @apply antialiased text-admin-text-primary bg-admin-bg;
+    font-family: var(--font-ui);
+    font-size: var(--text-base);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
+  }
+
+/* Layout and components */
+.admin-layout {
+    @apply flex h-screen overflow-hidden bg-admin-bg;
+    font-family: var(--font-ui);
+  }
+
+  .admin-main {
+    @apply flex-1 flex flex-col overflow-hidden min-w-0;
+  }
+
+  .admin-content {
+    @apply flex-1 overflow-y-auto p-6 scroll-smooth;
+  }
+
+  /* ═══ CARDS ═══ */
+  .page-card {
+    @apply bg-admin-surface border border-admin-border rounded-xl shadow-card overflow-hidden;
+  }
+
+  .page-card-header {
+    @apply px-5 py-4 border-b border-admin-border-2 flex items-center justify-between;
+  }
+
+  .page-card-body {
+    @apply p-5;
+  }
+
+  .page-card-footer {
+    @apply px-5 py-3.5 border-t border-admin-border-2 bg-admin-bg;
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .btn-admin {
+    @apply inline-flex items-center justify-center gap-1.5 font-semibold rounded-lg cursor-pointer transition-all duration-150 border border-transparent whitespace-nowrap active:scale-[0.98] disabled:opacity-45 disabled:cursor-not-allowed;
+  }
+
+  .btn-admin-primary {
+    @apply bg-brand-green text-white border-brand-green hover:bg-green-700 hover:shadow-lg hover:shadow-green-500/20 hover:-translate-y-0.5;
+  }
+
+  .btn-admin-secondary {
+    @apply bg-admin-surface text-admin-text-primary border-admin-border shadow-xs hover:bg-admin-bg hover:border-admin-text-tertiary;
+  }
+
+  .btn-admin-ghost {
+    @apply bg-transparent text-admin-text-secondary hover:bg-admin-bg hover:text-admin-text-primary;
+  }
+
+  .btn-admin-danger {
+    @apply bg-danger text-white border-danger hover:bg-red-700 hover:shadow-lg hover:shadow-red-500/20 hover:-translate-y-0.5;
+  }
+
+  /* ═══ FORMS ═══ */
+  .form-label {
+    @apply block text-sm font-medium text-admin-text-primary mb-1.5;
+  }
+
+  .admin-input {
+    @apply w-full h-9 px-3 bg-admin-surface border border-admin-border rounded-lg text-sm transition-all duration-150 outline-none focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 placeholder:text-admin-text-tertiary;
+  }
+
+  /* ═══ SCROLLBAR ═══ */
+  .admin-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .admin-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
