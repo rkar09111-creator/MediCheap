@@ -43,6 +43,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../../store/authStore';
 import { adminService } from '../../../services/api';
 import AdminSidebarStats from './AdminSidebarStats';
+import Logo from '../../../components/common/Logo';
 
 const NavItem = ({ to, icon: Icon, label, badge, isCollapsed, tooltip }) => (
   <NavLink
@@ -181,19 +182,13 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }) => {
       className="fixed left-0 top-0 bottom-0 flex flex-col z-[100] bg-sidebar-bg border-r border-sidebar-border transition-all duration-300 ease-in-out border-t-2 border-brand-green"
     >
       {/* LOGO SECTION */}
-      <div className="h-[60px] px-4 flex items-center gap-3 border-b border-sidebar-border shrink-0">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-green to-green-400 flex items-center justify-center shrink-0">
-          <ShieldCheck size={16} className="text-white" strokeWidth={3} />
-        </div>
-        {!isCollapsed && (
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-baseline gap-0.5">
-              <span className="text-white font-bold text-sm tracking-tight">Medi</span>
-              <span className="text-brand-green-lt font-bold text-sm tracking-tight">Cheap</span>
-            </div>
-            <span className="text-[9px] font-bold text-sidebar-text uppercase tracking-widest leading-none">Admin Portal</span>
-          </div>
-        )}
+      <div className="h-[60px] px-4 flex items-center border-b border-sidebar-border shrink-0">
+        <Logo 
+          variant="admin" 
+          size={isCollapsed ? "sm" : "md"} 
+          className={isCollapsed ? "justify-center w-full" : ""}
+          isScrolled={true}
+        />
       </div>
 
       {/* COLLAPSE TOGGLE */}

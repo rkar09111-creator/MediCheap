@@ -10,7 +10,8 @@ import {
   Settings, 
   LogOut,
   Map,
-  ChevronRight
+  ChevronRight,
+  Shield
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../../components/ui';
@@ -54,7 +55,6 @@ const Sidebar = ({ role }) => {
         </div>
         <div className="flex flex-col">
             <span className="font-display font-black text-2xl text-white tracking-tighter leading-none">MediCheap</span>
-            <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.4em] mt-1.5">Institutional OS</span>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ const Sidebar = ({ role }) => {
                   </span>
                   <span className="text-[14px] font-medium tracking-tight">{link.name}</span>
                 </div>
-                {isActive && <div className="w-2 h-2 bg-brand-primary rounded-full shadow-[0_0_12px_rgba(22,163,74,0.6)] animate-pulse" />}
+                {isActive && <div className="w-2 h-2 bg-brand-primary rounded-full shadow-[0_0_12px_rgba(0,200,83,0.6)] animate-pulse" />}
               </>
             )}
           </NavLink>

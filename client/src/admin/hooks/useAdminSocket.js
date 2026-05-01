@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { API_URL } from '../../constants';
 import { useNotificationStore } from '../store/notificationStore';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const SOCKET_URL = API_URL;
 
 let sharedSocket = null; // Singleton — prevent duplicate connections
 

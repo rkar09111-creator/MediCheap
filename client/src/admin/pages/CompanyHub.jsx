@@ -156,7 +156,7 @@ const CompanyHub = () => {
   const openForm = (type, item = null) => {
     setEditItem(item);
     if (type === 'company') {
-      setFormData(item || { name: '', shortName: '', primaryColor: '#16A34A', isActive: true });
+      setFormData(item || { name: '', shortName: '', primaryColor: '#024F3A', isActive: true });
       setView('form-company');
     } else if (type === 'category') {
       setFormData(item || { name: '', icon: '💊', isActive: true, displayOrder: 0 });
@@ -392,8 +392,8 @@ const CompanyHub = () => {
                     <div className="space-y-3">
                       <label className="text-[10px] font-black text-admin-text-secondary uppercase tracking-widest">Brand Color</label>
                       <div className="flex items-center gap-4 bg-neutral-50 p-3 rounded-2xl border border-admin-border">
-                         <input type="color" value={formData.primaryColor || '#16A34A'} onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })} className="w-10 h-10 rounded-xl cursor-pointer" />
-                         <span className="text-sm font-mono font-bold uppercase text-admin-text-primary">{formData.primaryColor || '#16A34A'}</span>
+                         <input type="color" value={formData.primaryColor || '#024F3A'} onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })} className="w-10 h-10 rounded-xl cursor-pointer" />
+                         <span className="text-sm font-mono font-bold uppercase text-admin-text-primary">{formData.primaryColor || '#024F3A'}</span>
                       </div>
                     </div>
                     <div className="space-y-3">

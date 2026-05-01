@@ -68,7 +68,7 @@ const IncomingOrderModal = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[200] pointer-events-none"
             style={{
-              background: 'radial-gradient(circle at 50% 50%, rgba(34,197,94,0.06) 0%, transparent 70%)',
+              background: 'radial-gradient(circle at 50% 50%, rgba(0,200,83,0.06) 0%, transparent 70%)',
             }}
           />
 
@@ -83,7 +83,7 @@ const IncomingOrderModal = () => {
           >
             {/* Pulsing Ring Border */}
             <div className="absolute inset-0 rounded-2xl animate-pulse pointer-events-none"
-              style={{ boxShadow: '0 0 0 3px rgba(34,197,94,0.4), 0 0 40px rgba(34,197,94,0.15)' }}
+              style={{ boxShadow: '0 0 0 3px rgba(0,200,83,0.4), 0 0 40px rgba(0,200,83,0.15)' }}
             />
 
             <div className="bg-white rounded-2xl shadow-2xl border border-green-200 overflow-hidden">

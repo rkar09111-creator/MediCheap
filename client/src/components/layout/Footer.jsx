@@ -17,45 +17,16 @@ import {
     Shield,
     Globe
 } from 'lucide-react';
+import Logo from '../common/Logo';
+import { useSettingsStore } from '../../store/settingsStore';
 import { cn } from '../ui';
 
-const Logo = ({ light }) => (
-  <div className="flex items-center gap-2.5 group cursor-pointer">
-    <div className="relative">
-      <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center rotate-[-10deg] group-hover:rotate-0 transition-all duration-500 shadow-lg shadow-brand-600/20">
-        <Pill className="text-white" size={24} strokeWidth={2.5} />
-      </div>
-      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-sm border border-neutral-100">
-        <Plus className="text-brand-primary" size={12} strokeWidth={3} />
-      </div>
-    </div>
-    <div className="flex items-baseline font-display text-2xl tracking-tighter">
-      <span className={light ? "font-extrabold text-white" : "font-extrabold text-neutral-900"}>Medi</span>
-      <span className="font-extrabold text-brand-primary">Cheap</span>
-    </div>
-  </div>
-);
+
 
 const Footer = () => {
-    const [settings, setSettings] = useState({
-        support_phone: '+91 1800-123-4567',
-        support_email: 'care@medicheap.in',
-        license_number: 'DL-2045/B-Z10 · MH-MUM-400001'
-    });
+    const { settings } = useSettingsStore();
 
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const { data } = await settingService.getSettings();
-                if (data.data?.settings) {
-                    setSettings(prev => ({ ...prev, ...data.data.settings }));
-                }
-            } catch (error) {
-                console.error('Failed to fetch footer settings');
-            }
-        };
-        fetchSettings();
-    }, []);
+
     return (
         <footer className="relative bg-neutral-950 text-neutral-400 font-body overflow-hidden">
             {/* 🔝 Design Signal: Forest Green Accent Bar */}

@@ -56,19 +56,19 @@ const Dashboard = () => {
     if (loading || !stats) return (
         <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
             <Loader2 size={32} className="text-brand-green animate-spin" />
-            <p className="text-xs font-bold text-admin-text-tertiary uppercase tracking-[0.2em] animate-pulse">Syncing Nerve Center...</p>
+            <p className="text-xs font-bold text-admin-text-tertiary uppercase tracking-[0.2em] animate-pulse">Loading Admin Dashboard...</p>
         </div>
     );
 
-    const COLORS = ['#16A34A', '#22C55E', '#4ADE80', '#86EFAC', '#BBF7D0'];
+    const COLORS = ['#024F3A', '#059669', '#34D399', '#BBF7E2', '#DCFCEE'];
 
     return (
         <div className="space-y-6">
             {/* TOP HEADER */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-admin-text-primary tracking-tight">Executive Dashboard</h1>
-                    <p className="text-xs text-admin-text-tertiary font-medium mt-0.5">Real-time intelligence from MediCheap Infrastructure</p>
+                    <h1 className="text-2xl font-bold text-admin-text-primary tracking-tight">Admin Dashboard</h1>
+                    <p className="text-xs text-admin-text-tertiary font-medium mt-0.5">Real-time overview of MediCheap operations</p>
                 </div>
                 <div className="flex items-center gap-2 bg-admin-surface p-1 rounded-lg border border-admin-border shadow-sm">
                     {['24h', '7d', '30d', 'All'].map((range) => (
@@ -163,7 +163,7 @@ const Dashboard = () => {
                     icon={ShoppingBag} 
                     trend="up" 
                     trendValue="8.4" 
-                    subtitle="Currently in pipeline"
+                    subtitle="Currently being processed"
                     color="purple"
                     urgent={stats.pendingOrders > 10}
                 />
@@ -191,7 +191,7 @@ const Dashboard = () => {
                     <div className="page-card-header">
                         <div className="flex items-center gap-2">
                             <TrendingUp size={16} className="text-brand-green" />
-                            <h3 className="text-sm font-bold text-admin-text-primary">Revenue Velocity</h3>
+                            <h3 className="text-sm font-bold text-admin-text-primary">Revenue Trends</h3>
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1.5">
@@ -209,8 +209,8 @@ const Dashboard = () => {
                             <AreaChart data={stats.revenueChart || []}>
                                 <defs>
                                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#16A34A" stopOpacity={0.1}/>
-                                        <stop offset="95%" stopColor="#16A34A" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#024F3A" stopOpacity={0.1}/>
+                                        <stop offset="95%" stopColor="#024F3A" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
@@ -239,7 +239,7 @@ const Dashboard = () => {
                                 <Area 
                                     type="monotone" 
                                     dataKey="revenue" 
-                                    stroke="#16A34A" 
+                                    stroke="#024F3A" 
                                     strokeWidth={2} 
                                     fillOpacity={1} 
                                     fill="url(#colorRev)" 
@@ -268,7 +268,7 @@ const Dashboard = () => {
                                         dy={5}
                                     />
                                     <Tooltip 
-                                        cursor={{ fill: 'rgba(22, 163, 74, 0.05)' }}
+                                        cursor={{ fill: 'rgba(5, 150, 105, 0.05)' }}
                                         contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: 'var(--shadow-md)' }}
                                     />
                                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
@@ -299,17 +299,17 @@ const Dashboard = () => {
                 <div className="page-card-header">
                     <div className="flex items-center gap-2">
                         <Clock size={16} className="text-brand-green" />
-                        <h3 className="text-sm font-bold text-admin-text-primary">Recent Order Feed</h3>
+                        <h3 className="text-sm font-bold text-admin-text-primary">Recent Orders</h3>
                     </div>
                     <button className="btn-admin btn-admin-secondary h-8 px-3 text-[11px]">
-                        View Pipeline
+                        View All Orders
                     </button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-admin-bg/50 border-b border-admin-border">
-                                <th className="px-5 py-3 text-left text-[10px] font-bold text-admin-text-tertiary uppercase tracking-wider">Node ID</th>
+                                <th className="px-5 py-3 text-left text-[10px] font-bold text-admin-text-tertiary uppercase tracking-wider">Order ID</th>
                                 <th className="px-5 py-3 text-left text-[10px] font-bold text-admin-text-tertiary uppercase tracking-wider">Customer</th>
                                 <th className="px-5 py-3 text-left text-[10px] font-bold text-admin-text-tertiary uppercase tracking-wider">Amount</th>
                                 <th className="px-5 py-3 text-left text-[10px] font-bold text-admin-text-tertiary uppercase tracking-wider">Status</th>
@@ -351,7 +351,7 @@ const Dashboard = () => {
                 </div>
                 <div className="page-card-footer flex justify-center">
                     <button className="text-[11px] font-bold text-brand-green hover:underline uppercase tracking-widest flex items-center gap-1.5">
-                        Expand Master Registry <ArrowRight size={12} />
+                        View All Orders <ArrowRight size={12} />
                     </button>
                 </div>
             </div>

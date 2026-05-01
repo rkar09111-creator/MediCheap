@@ -131,8 +131,8 @@ const AdminDashboard = () => {
                             <AreaChart data={stats.revenueChart} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#16A34A" stopOpacity={0.15}/>
-                                        <stop offset="95%" stopColor="#16A34A" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#00C853" stopOpacity={0.15}/>
+                                        <stop offset="95%" stopColor="#00C853" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -150,13 +150,13 @@ const AdminDashboard = () => {
                                 />
                                 <Tooltip 
                                     contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 30px 60px rgba(0,0,0,0.12)', padding: '20px' }}
-                                    itemStyle={{ fontWeight: 900, color: '#16A34A', fontSize: '14px', textTransform: 'uppercase' }}
+                                    itemStyle={{ fontWeight: 900, color: '#00C853', fontSize: '14px', textTransform: 'uppercase' }}
                                     labelStyle={{ fontWeight: 900, color: '#111827', marginBottom: '8px' }}
                                 />
                                 <Area 
                                     type="monotone" 
                                     dataKey="revenue" 
-                                    stroke="#16A34A" 
+                                    stroke="#00C853" 
                                     strokeWidth={5} 
                                     fillOpacity={1} 
                                     fill="url(#colorRevenue)" 

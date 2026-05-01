@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { io } from 'socket.io-client';
+import { API_URL } from '../constants';
 import { Truck, MapPin } from 'lucide-react';
 
 // Fix icon issue
@@ -37,8 +38,7 @@ const TrackingMap = ({ orderId, userLocation, riderId }) => {
     const storeLocation = [20.2961, 85.8245];
 
     useEffect(() => {
-        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const socket = io(socketUrl);
+        const socket = io(API_URL);
         
         socket.emit('join:order', { orderId });
 

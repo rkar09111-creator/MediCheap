@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Menu, X, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminSidebar from './AdminSidebar';
+import Logo from '../../../components/common/Logo';
 
 const AdminMobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,13 +17,7 @@ const AdminMobileNav = () => {
           >
             <Menu size={20} />
           </button>
-          <div className="flex items-baseline gap-0.5">
-            <span className="text-admin-text-primary font-bold text-sm tracking-tight">Medi</span>
-            <span className="text-brand-green font-bold text-sm tracking-tight">Cheap</span>
-          </div>
-        </div>
-        <div className="w-8 h-8 rounded-lg bg-brand-green flex items-center justify-center">
-          <ShieldCheck size={16} className="text-white" />
+          <Logo variant="admin" size="sm" isScrolled={false} className="!gap-1.5" />
         </div>
       </header>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { io } from 'socket.io-client';
+import { API_URL } from '../../constants';
 import { Navigation, MapPin, Send, Compass } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -34,8 +35,7 @@ const NavigationMap = ({ orderId, riderId }) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const newSocket = io(socketUrl);
+        const newSocket = io(API_URL);
         setSocket(newSocket);
         
         if (orderId) {

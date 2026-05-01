@@ -30,8 +30,8 @@ const AdminSidebarStats = ({ isCollapsed }) => {
     <div className="px-4 py-6 mt-4 border-t border-sidebar-border/50">
       <div className="flex items-center justify-between mb-4">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sidebar-text opacity-40">Live Intel</p>
-        <div className="flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-brand-green opacity-75"></span>
+        <div className="flex h-1.5 w-1.5 relative">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-green opacity-75"></span>
           <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-green"></span>
         </div>
       </div>
@@ -50,7 +50,7 @@ const AdminSidebarStats = ({ isCollapsed }) => {
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(((stats?.customers?.activeNow || 0) / 50) * 100, 100)}%` }}
-              className="h-full bg-brand-green shadow-[0_0_8px_rgba(34,197,94,0.4)]"
+              className="h-full bg-brand-green shadow-[0_0_8px_rgba(0,200,83,0.4)]"
             />
           </div>
         </div>

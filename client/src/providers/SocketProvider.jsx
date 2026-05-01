@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { API_URL } from '../constants';
 import { useAuthStore } from '../store/authStore';
 import { useNotificationStore } from '../store/notificationStore';
 import toast from 'react-hot-toast';
@@ -15,8 +16,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const socket = io(socketUrl);
+      const socket = io(API_URL);
       socketRef.current = socket;
 
       socket.on('connect', () => {

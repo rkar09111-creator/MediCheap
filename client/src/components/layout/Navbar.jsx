@@ -16,31 +16,16 @@ import {
   Heart,
   LayoutGrid
 } from 'lucide-react';
+import Logo from '../common/Logo';
 import { useAuthStore } from '../../store/authStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useCartStore } from '../../store/cartStore';
 import { medicineService, settingService } from '../../services/api';
+import { UI_CONSTANTS } from '../../constants';
 import { Button, cn } from '../ui';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
-const Logo = ({ isScrolled, isHome }) => (
-  <div className="flex items-center gap-2.5 group cursor-pointer">
-    <div className="relative">
-      <div className="w-9 h-9 bg-brand-primary rounded-xl flex items-center justify-center rotate-[-10deg] group-hover:rotate-0 transition-all duration-500 shadow-lg shadow-brand-600/20">
-        <Pill className="text-white" size={20} strokeWidth={3} />
-      </div>
-      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-neutral-100">
-        <Plus className="text-brand-primary" size={10} strokeWidth={4} />
-      </div>
-    </div>
-    <div className="flex items-baseline font-display text-2xl tracking-tighter">
-      <span className={cn(
-        "font-extrabold transition-colors duration-300",
-        (isHome && !isScrolled) ? "text-white" : "text-neutral-900"
-      )}>Medi</span>
-      <span className="font-extrabold text-brand-primary">Cheap</span>
-    </div>
-  </div>
-);
+
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuthStore();
@@ -51,12 +36,9 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [settings, setSettings] = useState({
-    announcement: 'FREE delivery on orders above ₹499 | Same-day delivery before 6 PM | 100% genuine medicines guaranteed',
-    is_active: true
-  });
+  const { settings } = useSettingsStore();
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,19 +75,7 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const { data } = await settingService.getSettings();
-        if (data.data?.settings) {
-          setSettings(prev => ({ ...prev, ...data.data.settings }));
-        }
-      } catch (error) {
-        console.error('Failed to fetch settings', error);
-      }
-    };
-    fetchSettings();
-  }, []);
+
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -113,6 +83,15 @@ const Navbar = () => {
     setShowSearchOverlay(false);
     setSearchQuery('');
   }, [location.pathname]);
+
+  // Dynamic Layout Coupling Fix
+  useEffect(() => {
+    const navbarHeight = isScrolled ? UI_CONSTANTS.NAVBAR_HEIGHT_SCROLLED : UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT;
+    const announcementHeight = showAnnouncement ? UI_CONSTANTS.ANNOUNCEMENT_HEIGHT : 0;
+    const totalHeight = navbarHeight + announcementHeight;
+    
+    document.documentElement.style.setProperty('--navbar-height', `${totalHeight}px`);
+  }, [isScrolled, showAnnouncement]);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -124,35 +103,49 @@ const Navbar = () => {
 
   return (
     <header className="fixed top-0 w-full z-[100] font-display">
-      {/* 🔝 Announcement Bar: SCROLLING MARQUEE */}
+      {/* 🔝 Announcement Bar: SCROLLING HIGH-TRUST MARQUEE */}
       <AnimatePresence>
         {showAnnouncement && (
           <motion.div
             initial={{ height: 0 }}
-            animate={{ height: 40 }}
+            animate={{ height: UI_CONSTANTS.ANNOUNCEMENT_HEIGHT }}
             exit={{ height: 0 }}
-            className="bg-gradient-to-r from-brand-900 via-brand-600 to-brand-900 text-white relative overflow-hidden"
+            className="bg-brand-primary text-white relative overflow-hidden"
           >
-            <div className="h-full flex items-center relative">
-              <div className="flex whitespace-nowrap animate-marquee py-2 relative">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-12 px-6 text-[10px] font-mono font-bold tracking-widest uppercase">
-                    <span className="flex items-center gap-2 text-brand-primary">
-                      <span className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-pulse" />
-                      SYS: LIVE_STATUS
-                    </span>
-                    <span className="flex items-center gap-2">{settings.announcement}</span>
+            <div className="h-full flex items-center relative whitespace-nowrap overflow-hidden">
+              <div className="flex animate-marquee hover:[animation-play-state:paused]">
+                {[1, 2, 3, 4].map((_, i) => (
+                  <div key={i} className="flex items-center gap-12 px-12">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">Free Delivery on all orders above ₹500</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">100% Genuine Clinical Grade Medicines</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">Verified by Licensed Pharmacists</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">24/7 Expert Support Available</span>
+                    </div>
                   </div>
                 ))}
               </div>
-              {/* Fade Gradients */}
-              <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-brand-900 to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-y-0 right-10 w-20 bg-gradient-to-l from-brand-900 to-transparent z-10 pointer-events-none" />
+              
+              {/* Fade Overlays */}
+              <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-brand-primary to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-brand-primary to-transparent z-10 pointer-events-none" />
+              
+              {/* Close Button */}
               <button
                 onClick={() => setShowAnnouncement(false)}
-                className="absolute right-4 p-1 hover:bg-white/20 rounded-full transition-colors z-10 bg-brand-900/50 backdrop-blur-sm"
+                className="absolute right-4 p-1 hover:bg-white/20 rounded-full transition-colors z-20"
               >
-                <X size={14} className="text-white opacity-70" />
+                <X size={12} className="text-white opacity-80" />
               </button>
             </div>
           </motion.div>
@@ -164,15 +157,12 @@ const Navbar = () => {
         "w-full transition-all duration-500 ease-spring",
         isMobileMenuOpen ? "bg-neutral-950" : (
           isScrolled
-            ? "h-[68px] bg-white/92 backdrop-blur-[24px] saturate-[180%] border-b border-black/5 shadow-[0_2px_20px_rgba(0,0,0,0.06)]"
-            : cn("h-[80px] bg-transparent border-transparent", isHome ? "text-white" : "text-neutral-900")
+            ? `h-[${UI_CONSTANTS.NAVBAR_HEIGHT_SCROLLED}px] bg-white/92 backdrop-blur-[24px] saturate-[180%] border-b border-black/5 shadow-[0_2px_20px_rgba(0,0,0,0.06)]`
+            : cn(`h-[${UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT}px] bg-transparent border-transparent`, isHome ? "text-white" : "text-neutral-900")
         )
       )}>
         <div className="container-custom h-full flex items-center justify-between">
-          {/* LEFT: PREMIUM LOGO */}
-          <Link to="/" className="shrink-0">
-            <Logo isScrolled={isScrolled} isHome={isHome} />
-          </Link>
+          <Logo isScrolled={isScrolled} isHome={isHome} className="shrink-0" />
 
           {/* CENTER: HIGH-CONVERSION LINKS */}
           <div className="hidden lg:flex items-center gap-2">
@@ -347,7 +337,7 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* 🔍 NEURAL SEARCH OVERLAY */}
+      {/* 🔍 SEARCH OVERLAY */}
       <AnimatePresence>
         {showSearchOverlay && (
           <motion.div
@@ -383,8 +373,8 @@ const Navbar = () => {
               <div className="mt-8 space-y-6 overflow-y-auto max-h-[60vh] no-scrollbar">
                 {isSearching ? (
                   <div className="flex items-center gap-4 text-brand-primary">
-                    <div className="w-2 h-2 bg-brand-primary rounded-full animate-ping" />
-                    <span className="text-xs font-black uppercase tracking-widest">Neural Indexing...</span>
+                    <div className="w-2 h-2 bg-brand-primary rounded-full animate-pulse" />
+                    <span className="text-xs font-black uppercase tracking-widest">Searching Clinical Database...</span>
                   </div>
                 ) : searchResults.length > 0 ? (
                   <div className="grid gap-4">
@@ -417,7 +407,7 @@ const Navbar = () => {
                     ))}
                   </div>
                 ) : searchQuery.length >= 2 ? (
-                  <p className="text-neutral-500 text-sm font-bold uppercase tracking-widest text-center py-10">No clinical matches identified.</p>
+                  <p className="text-neutral-500 text-sm font-bold uppercase tracking-widest text-center py-10">No products found.</p>
                 ) : (
                   <div className="space-y-4">
                      <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.3em]">Trending Searches</p>

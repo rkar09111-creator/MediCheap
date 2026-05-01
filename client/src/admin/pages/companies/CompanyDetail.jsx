@@ -214,7 +214,7 @@ const CompanyDetail = () => {
               {tab.label}
               {tab.count !== undefined && <span className="text-[9px] opacity-40">[{tab.count}]</span>}
               {activeTab === tab.id && (
-                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-brand-green rounded-full shadow-[0_-4px_12px_rgba(22,163,74,0.5)]" />
+                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-brand-green rounded-full shadow-[0_-4px_12px_rgba(0,200,83,0.5)]" />
               )}
             </button>
           ))}

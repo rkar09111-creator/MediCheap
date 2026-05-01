@@ -23,7 +23,7 @@ const UserLayout = () => {
     return (
         <div className="min-h-screen bg-white">
             <Navbar />
-            <div className="pt-[80px] flex">
+            <div className="flex" style={{ paddingTop: 'var(--navbar-height)' }}>
                 <div className="hidden lg:block">
                     <UserSidebar />
                 </div>

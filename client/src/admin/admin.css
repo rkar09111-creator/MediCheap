@@ -38,7 +38,7 @@
     --sidebar-text-hover: #C4CDD6;
     --sidebar-text-active:#FFFFFF;
     --sidebar-icon:       #5A6878;
-    --sidebar-icon-active:#22C55E;
+    --sidebar-icon-active:#024F3A;
 
     /* Page Canvas */
     --admin-bg:         #F4F6F8;
@@ -54,29 +54,29 @@
     --admin-text-inverse:   #FFFFFF;
 
     /* Brand */
-    --brand-green:     #16A34A;
-    --brand-green-lt:  #22C55E;
-    --brand-green-50:  #F0FDF4;
-    --brand-green-100: #DCFCE7;
-    --brand-green-200: #BBF7D0;
+    --brand-green:     #024F3A;
+    --brand-green-lt:  #059669;
+    --brand-green-50:  #F0FDF9;
+    --brand-green-100: #DCFCEE;
+    --brand-green-200: #BBF7E2;
 
     /* Status */
     --status-pending:    #F59E0B;
     --status-confirmed:  #3B82F6;
     --status-packed:     #8B5CF6;
     --status-delivery:   #F97316;
-    --status-delivered:  #22C55E;
+    --status-delivered:  #024F3A;
     --status-cancelled:  #EF4444;
     --status-rx-pending: #EC4899;
 
     /* Semantic */
-    --success:  #16A34A;
+    --success:  #024F3A;
     --warning:  #D97706;
     --danger:   #DC2626;
     --info:     #2563EB;
 
     /* Interactive */
-    --focus-ring: rgba(22,163,74,0.25);
+    --focus-ring: rgba(2, 79, 58, 0.2);
 
     /* ═══ SHADOW SYSTEM ═══ */
     --shadow-xs: 0 1px 2px rgba(13,17,23,0.04);

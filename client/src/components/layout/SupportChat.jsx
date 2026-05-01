@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, X, Send, User, ShieldCheck, Loader2 } from 'lucide-react';
 import { Button, cn } from '../ui';
 import { io } from 'socket.io-client';
+import { API_URL } from '../../constants';
 import { chatService } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
 
@@ -50,7 +51,7 @@ const SupportChat = () => {
 
             // Socket init
             if (!socketRef.current) {
-                socketRef.current = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000', {
+                socketRef.current = io(API_URL, {
                     withCredentials: true
                 });
 

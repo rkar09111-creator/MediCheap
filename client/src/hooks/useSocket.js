@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { API_URL } from '../constants';
 import { useAuthStore } from '../store/authStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useNotificationStore } from '../store/notificationStore';
@@ -17,7 +18,7 @@ export const useSocket = () => {
   useEffect(() => {
     if (isAuthenticated && user) {
       if (!socket) {
-        socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+        socket = io(API_URL, {
           withCredentials: true
         });
 

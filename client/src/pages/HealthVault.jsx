@@ -18,7 +18,8 @@ import {
   Filter,
   FileDigit,
   FlaskConical,
-  HeartPulse
+  HeartPulse,
+  BadgeCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
@@ -40,7 +41,7 @@ const HealthVault = () => {
       const { data } = await prescriptionService.getUserPrescriptions();
       setDocuments(data.data.prescriptions || []);
     } catch (error) {
-      console.error('Failed to access health vault');
+      console.error('Failed to load prescriptions');
     } finally {
       setLoading(false);
     }
@@ -52,15 +53,15 @@ const HealthVault = () => {
 
   const onDrop = useCallback(async acceptedFiles => {
     setIsUploading(true);
-    const toastId = toast.loading('Encrypting & Uploading Document...');
+    const toastId = toast.loading('Uploading your document...');
     try {
       const formData = new FormData();
       formData.append('prescription', acceptedFiles[0]);
       await prescriptionService.upload(formData);
-      toast.success('Document Secured in Vault.', { id: toastId });
+      toast.success('Document uploaded successfully.', { id: toastId });
       fetchDocuments();
     } catch (error) {
-      toast.error('Security verification failed.', { id: toastId });
+      toast.error('Upload failed. Please try again.', { id: toastId });
     } finally {
       setIsUploading(false);
     }
@@ -74,10 +75,10 @@ const HealthVault = () => {
   });
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to purge this record from your vault?')) return;
+    if (!window.confirm('Are you sure you want to delete this prescription?')) return;
     try {
       await prescriptionService.delete(id);
-      toast.success('Record Erased.');
+      toast.success('Document deleted.');
       fetchDocuments();
     } catch (error) {
       toast.error('Deletion failed.');
@@ -92,121 +93,113 @@ const HealthVault = () => {
   return (
     <div className="min-h-screen bg-transparent pb-20 selection:bg-brand-600/10">
       <div className="w-full max-w-full">
-        {/* HEADER: VAULT SECURITY PROTOCOL */}
+        {/* HEADER: SIMPLE & CLEAR */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
            <div className="space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-500/10 border border-brand-500/20 rounded-full">
-                 <Lock size={12} className="text-brand-primary" />
-                 <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.2em]">End-to-End Encrypted Vault</span>
+                 <ShieldCheck size={12} className="text-brand-600" />
+                 <span className="text-[10px] font-black text-brand-600 uppercase tracking-widest">Secure Storage</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-display font-black text-neutral-900 tracking-tight leading-tight">
-                 Medical Records <br />
-                 <span className="text-brand-primary">& Health Vault.</span>
+              <h1 className="text-4xl md:text-5xl font-black text-neutral-900 tracking-tight leading-tight">
+                 Prescriptions <br />
+                 <span className="text-brand-500">& Records.</span>
               </h1>
               <p className="text-neutral-500 font-medium max-w-lg leading-relaxed">
-                 Manage your clinical prescriptions, diagnostic reports, and digital health identity in a high-security environment.
+                 Keep your medical prescriptions and health records in one safe place for easy access and faster orders.
               </p>
            </div>
 
            <div className="flex items-center gap-6">
               <div className="text-right hidden sm:block">
-                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Vault Status</p>
-                 <div className="flex items-center justify-end gap-2 text-emerald-600">
-                    <ShieldCheck size={18} />
-                    <span className="text-sm font-black uppercase tracking-tighter">Securely Active</span>
+                 <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Protection Status</p>
+                 <div className="flex items-center justify-end gap-2 text-brand-600">
+                    <Lock size={18} />
+                    <span className="text-sm font-black uppercase tracking-widest">Fully Secure</span>
                  </div>
               </div>
-              <div className="w-16 h-16 bg-white rounded-2xl shadow-xl shadow-neutral-200/50 flex items-center justify-center text-brand-primary border border-neutral-100">
-                 <BadgeCheck size={32} />
+              <div className="w-16 h-16 bg-white rounded-2xl shadow-xl shadow-neutral-200/50 flex items-center justify-center text-brand-500 border border-neutral-100">
+                 <ShieldCheck size={32} />
               </div>
            </div>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10">
-           {/* LEFT: UPLOAD & STATS */}
+           {/* LEFT: UPLOAD */}
            <div className="lg:col-span-4 space-y-8">
-              {/* UPLOAD ZONE */}
               <div {...getRootProps()} className={cn(
-                "bg-white rounded-[2.5rem] border-2 border-dashed p-10 text-center transition-all cursor-pointer group shadow-premium",
-                isDragActive ? "border-brand-primary bg-brand-50/50" : "border-neutral-100 hover:border-brand-primary/40 hover:shadow-xl"
+                "bg-white rounded-[2.5rem] border-2 border-dashed p-10 text-center transition-all cursor-pointer group shadow-sm",
+                isDragActive ? "border-brand-500 bg-brand-50/50" : "border-neutral-100 hover:border-brand-500/40 hover:shadow-xl"
               )}>
                  <input {...getInputProps()} />
                  <div className="space-y-6">
-                    <div className="w-20 h-20 bg-neutral-50 rounded-3xl flex items-center justify-center text-neutral-300 mx-auto group-hover:scale-110 group-hover:bg-brand-50 group-hover:text-brand-primary transition-all">
+                    <div className="w-20 h-20 bg-neutral-50 rounded-3xl flex items-center justify-center text-neutral-300 mx-auto group-hover:scale-110 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all">
                        <Upload size={32} />
                     </div>
                     <div>
-                       <h3 className="text-lg font-black text-neutral-900 tracking-tight">Deposit Record</h3>
+                       <h3 className="text-lg font-black text-neutral-900 tracking-tight">Upload Prescription</h3>
                        <p className="text-xs text-neutral-400 font-medium mt-2 leading-relaxed">
-                          Drag & drop clinical documents or click to browse. <br />
+                          Drag & drop your documents or click to browse. <br />
                           <span className="text-[10px] font-black uppercase text-neutral-300 mt-2 block">JPG, PNG, PDF (MAX 5MB)</span>
                        </p>
                     </div>
                     {isUploading ? (
                        <div className="flex items-center justify-center gap-2 py-2">
-                          <Activity size={16} className="text-brand-primary animate-pulse" />
-                          <span className="text-xs font-black text-brand-primary uppercase tracking-widest">Encrypting...</span>
+                          <Activity size={16} className="text-brand-500 animate-pulse" />
+                          <span className="text-xs font-black text-brand-500 uppercase tracking-widest">Uploading...</span>
                        </div>
                     ) : (
-                       <Button variant="ghost" className="border border-neutral-100 rounded-xl px-8 hover:bg-neutral-50 font-bold text-xs">Browse Vault</Button>
+                       <Button variant="ghost" className="border border-neutral-100 rounded-xl px-8 hover:bg-neutral-50 font-bold text-xs">Browse Files</Button>
                     )}
                  </div>
               </div>
 
-              {/* VAULT ANALYTICS */}
+              {/* STORAGE SUMMARY */}
               <div className="bg-neutral-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                 <h4 className="text-[11px] font-black text-brand-primary uppercase tracking-[0.2em] mb-8">Vault Utilization</h4>
+                 <h4 className="text-[11px] font-black text-brand-500 uppercase tracking-widest mb-8">Storage Summary</h4>
                  <div className="space-y-6">
                     <div className="flex items-center justify-between">
                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-white/5 rounded-lg text-neutral-400"><FileDigit size={18} /></div>
-                          <span className="text-sm font-bold text-neutral-300">Total Records</span>
+                          <div className="p-2 bg-white/5 rounded-lg text-neutral-400"><FileText size={18} /></div>
+                          <span className="text-sm font-bold text-neutral-300">Total Files</span>
                        </div>
                        <span className="text-xl font-black">{documents.length}</span>
                     </div>
                     <div className="flex items-center justify-between">
                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-white/5 rounded-lg text-neutral-400"><HeartPulse size={18} /></div>
-                          <span className="text-sm font-bold text-neutral-300">Verified Rx</span>
+                          <div className="p-2 bg-white/5 rounded-lg text-neutral-400"><CheckCircle2 size={18} /></div>
+                          <span className="text-sm font-bold text-neutral-300">Approved</span>
                        </div>
-                       <span className="text-xl font-black text-brand-primary">{documents.filter(d => d.status === 'verified').length}</span>
+                       <span className="text-xl font-black text-brand-500">{documents.filter(d => d.status === 'verified').length}</span>
                     </div>
                     <div className="h-px bg-white/5 my-4" />
                     <p className="text-[10px] text-neutral-500 font-bold leading-relaxed">
-                       Your data is protected by AES-256 encryption protocol. Only you and authorized pharmacists can access these nodes.
+                       Your health data is private and encrypted. Only you can view or delete these records.
                     </p>
                  </div>
               </div>
            </div>
 
-           {/* RIGHT: RECORD EXPLORER */}
+           {/* RIGHT: LIST */}
            <div className="lg:col-span-8 space-y-8">
-              {/* SEARCH & FILTER */}
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                 <div className="relative flex-1 w-full">
-                    <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-300" />
-                    <input 
-                      type="text" 
-                      placeholder="Locate clinical record by date or status..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-14 pr-6 py-4 bg-white border border-neutral-100 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary/20 transition-all outline-none"
-                    />
-                 </div>
-                 <button className="h-14 px-6 bg-white border border-neutral-100 rounded-2xl flex items-center gap-3 text-neutral-500 hover:text-neutral-900 transition-all">
-                    <Filter size={18} />
-                    <span className="text-xs font-black uppercase tracking-widest">Protocol</span>
-                 </button>
+              {/* SEARCH */}
+              <div className="relative flex-1 w-full">
+                 <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-300" />
+                 <input 
+                   type="text" 
+                   placeholder="Search your records..." 
+                   value={searchTerm}
+                   onChange={(e) => setSearchTerm(e.target.value)}
+                   className="w-full pl-14 pr-6 py-4 bg-white border border-neutral-100 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-brand-500/5 focus:border-brand-500/20 transition-all outline-none"
+                 />
               </div>
 
               {/* TABS */}
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
                  {[
-                    { id: 'all', label: 'All Records', count: documents.length },
+                    { id: 'all', label: 'All Files', count: documents.length },
                     { id: 'prescriptions', label: 'Prescriptions', count: documents.length },
-                    { id: 'reports', label: 'Diagnostic Reports', count: 0 },
-                    { id: 'verified', label: 'Verified', count: documents.filter(d => d.status === 'verified').length }
+                    { id: 'verified', label: 'Approved', count: documents.filter(d => d.status === 'verified').length }
                  ].map(tab => (
                     <button 
                       key={tab.id}
@@ -217,7 +210,7 @@ const HealthVault = () => {
                       )}
                     >
                        {tab.label}
-                       <span className={cn("px-2 py-0.5 rounded-md text-[9px]", activeTab === tab.id ? "bg-brand-primary text-white" : "bg-neutral-100")}>{tab.count}</span>
+                       <span className={cn("px-2 py-0.5 rounded-md text-[9px]", activeTab === tab.id ? "bg-brand-500 text-white" : "bg-neutral-100")}>{tab.count}</span>
                     </button>
                  ))}
               </div>
@@ -235,25 +228,25 @@ const HealthVault = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ delay: i * 0.05 }}
-                            className="bg-white p-6 rounded-[2rem] border border-neutral-100 shadow-sm flex items-center justify-between group hover:border-brand-primary transition-all"
+                            className="bg-white p-6 rounded-[2rem] border border-neutral-100 shadow-sm flex items-center justify-between group hover:border-brand-500 transition-all"
                           >
                              <div className="flex items-center gap-6">
-                                <div className="w-14 h-14 bg-neutral-50 rounded-2xl flex items-center justify-center text-neutral-300 group-hover:bg-brand-50 group-hover:text-brand-primary transition-all shrink-0">
+                                <div className="w-14 h-14 bg-neutral-50 rounded-2xl flex items-center justify-center text-neutral-300 group-hover:bg-brand-50 group-hover:text-brand-500 transition-all shrink-0">
                                    <FileText size={28} />
                                 </div>
                                 <div className="min-w-0">
                                    <div className="flex items-center gap-3 mb-1">
-                                      <h4 className="text-sm font-black text-neutral-900 tracking-tight">Prescription Node #{doc._id.slice(-6).toUpperCase()}</h4>
+                                      <h4 className="text-sm font-black text-neutral-900 tracking-tight">Document #{doc._id.slice(-6).toUpperCase()}</h4>
                                       <Badge className={cn(
                                         "px-2 py-0.5 text-[9px] font-black uppercase border-none",
-                                        doc.status === 'verified' ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"
+                                        doc.status === 'verified' ? "bg-brand-100 text-brand-600" : "bg-amber-100 text-amber-600"
                                       )}>
                                          {doc.status}
                                       </Badge>
                                    </div>
                                    <div className="flex items-center gap-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                                       <span className="flex items-center gap-1.5"><Clock size={12} /> {format(new Date(doc.createdAt), 'dd MMM yyyy')}</span>
-                                      <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-emerald-500" /> AES-256 Protected</span>
+                                      <span className="flex items-center gap-1.5"><ShieldCheck size={12} className="text-brand-500" /> Secure Storage</span>
                                    </div>
                                 </div>
                              </div>
@@ -265,13 +258,13 @@ const HealthVault = () => {
                                 <a 
                                   href={doc.fileUrl} 
                                   download 
-                                  className="p-3 bg-neutral-50 text-neutral-400 rounded-xl hover:bg-brand-primary hover:text-white transition-all shadow-sm"
+                                  className="p-3 bg-neutral-50 text-neutral-400 rounded-xl hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
                                 >
                                    <Download size={18} />
                                 </a>
                                 <button 
                                   onClick={() => handleDelete(doc._id)}
-                                  className="p-3 bg-neutral-50 text-neutral-400 rounded-xl hover:bg-danger hover:text-white transition-all shadow-sm"
+                                  className="p-3 bg-neutral-50 text-neutral-400 rounded-xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
                                 >
                                    <Trash2 size={18} />
                                 </button>
@@ -282,13 +275,13 @@ const HealthVault = () => {
                  ) : (
                     <div className="py-20 text-center space-y-6 bg-white rounded-[3rem] border border-neutral-100">
                        <div className="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mx-auto text-neutral-200">
-                          <FlaskConical size={48} strokeWidth={1} />
+                          <FileText size={48} strokeWidth={1} />
                        </div>
                        <div className="space-y-2">
-                          <h3 className="text-xl font-black text-neutral-900 tracking-tight">Vault is Empty</h3>
-                          <p className="text-sm text-neutral-400 font-bold uppercase tracking-widest">Initial records awaiting clinical synchronization.</p>
+                          <h3 className="text-xl font-black text-neutral-900 tracking-tight">No records found</h3>
+                          <p className="text-sm text-neutral-400 font-bold uppercase tracking-widest">You haven't uploaded any documents yet.</p>
                        </div>
-                       <Button onClick={() => navigate('/shop')} variant="ghost" className="text-brand-primary font-black uppercase text-[10px] tracking-widest">Initialize Search</Button>
+                       <Button onClick={() => navigate('/shop')} className="bg-neutral-900 text-white font-black uppercase text-[10px] tracking-widest px-8 h-12 rounded-xl">Start Shopping</Button>
                     </div>
                  )}
               </div>
@@ -298,9 +291,5 @@ const HealthVault = () => {
     </div>
   );
 };
-
-const BadgeCheck = ({size}) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
-);
 
 export default HealthVault;

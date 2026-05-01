@@ -27,6 +27,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { io } from 'socket.io-client';
+import { API_URL } from '../../constants';
 import { toast } from 'react-hot-toast';
 import { chatService } from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
@@ -46,7 +47,7 @@ const SupportChat = () => {
     fetchChats();
     
     // Socket Initialization
-    socketRef.current = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000', {
+    socketRef.current = io(API_URL, {
       withCredentials: true
     });
 

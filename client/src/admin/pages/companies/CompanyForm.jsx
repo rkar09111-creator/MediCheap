@@ -20,7 +20,7 @@ import { companyService } from '../../../services/api';
 import { toast } from 'react-hot-toast';
 
 const PRESET_COLORS = [
-  '#16A34A', // MediCheap Green
+  '#00C853', // MediCheap Green
   '#2563EB', // Pharma Blue
   '#DC2626', // Medical Red
   '#7C3AED', // Bio Purple
@@ -51,7 +51,7 @@ const CompanyForm = () => {
     established: '',
     licenseNumber: '',
     gstNumber: '',
-    primaryColor: '#16A34A',
+    primaryColor: '#00C853',
     showOnWebsite: true,
     showInMedicineDetail: true,
     isFeatured: false,

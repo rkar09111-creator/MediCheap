@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { io } from 'socket.io-client';
+import { API_URL } from '../constants';
 import { 
     Package, 
     CheckCircle2, 
@@ -63,7 +64,7 @@ const TrackOrder = () => {
         };
         fetchOrder();
 
-        const socket = io('http://localhost:5000');
+        const socket = io(API_URL);
         socket.emit('join:order', id);
         socket.on('rider:location-update', (data) => {
             setRiderPos([data.lat, data.lng]);
@@ -74,8 +75,8 @@ const TrackOrder = () => {
 
     if (loading) return (
         <div className="h-[70vh] flex flex-col items-center justify-center gap-4">
-            <div className="w-16 h-16 border-4 border-primary-100 border-t-primary-500 rounded-full animate-spin" />
-            <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest">Synchronizing Satellite Fleet...</p>
+            <div className="w-16 h-16 border-4 border-brand-100 border-t-brand-500 rounded-full animate-spin" />
+            <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest">Fetching Order Status...</p>
         </div>
     );
     
@@ -92,29 +93,29 @@ const TrackOrder = () => {
     const currentStepIndex = steps.findIndex(s => s.status === order.status);
 
     return (
-        <div className="bg-neutral-50 min-h-screen pt-24 pb-20 font-body">
+        <div className="bg-neutral-50 min-h-screen pb-20 font-body">
             <div className="container-custom space-y-10">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[3px] text-neutral-400">
-                            <Link to="/orders" className="hover:text-primary-500 transition-colors flex items-center gap-1">
-                                <ArrowLeft size={14} /> Back to Command
+                            <Link to="/orders" className="hover:text-brand-500 transition-colors flex items-center gap-1">
+                                <ArrowLeft size={14} /> Back to Orders
                             </Link>
                             <ChevronRight size={14} />
                             <span className="text-neutral-900">Live Tracker</span>
                         </div>
                         <h1 className="text-5xl font-display font-extrabold text-neutral-900 tracking-tight leading-tight">
-                            Mission <span className="text-primary-500">#{order._id.slice(-8).toUpperCase()}</span>
+                            Order <span className="text-brand-500">#{order._id.slice(-8).toUpperCase()}</span>
                         </h1>
                     </div>
                     <div className="flex items-center gap-4 bg-white p-4 rounded-3xl border border-neutral-100 shadow-sm">
-                        <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-500">
+                        <div className="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-500">
                             <Activity size={24} />
                         </div>
                         <div>
                             <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-1">Fleet Status</p>
-                            <Badge variant="success" className="px-3 py-1 font-black text-[9px] uppercase tracking-widest bg-emerald-50 text-emerald-600 border-emerald-100">Active Tracking</Badge>
+                            <Badge variant="success" className="px-3 py-1 font-black text-[9px] uppercase tracking-widest bg-brand-50 text-brand-600 border-brand-100">Live Tracking</Badge>
                         </div>
                     </div>
                 </div>
@@ -123,7 +124,7 @@ const TrackOrder = () => {
                 <div className="bg-white rounded-[3rem] p-10 border border-neutral-100 shadow-premium overflow-hidden relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-neutral-50" />
                     <div 
-                        className="absolute top-0 left-0 h-1 bg-primary-500 transition-all duration-1000 shadow-[0_0_15px_rgba(14,165,233,0.5)]"
+                        className="absolute top-0 left-0 h-1 bg-brand-500 transition-all duration-1000 shadow-[0_0_15px_rgba(0,200,83,0.5)]"
                         style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
                     />
                     
@@ -136,9 +137,9 @@ const TrackOrder = () => {
                                     <div className={cn(
                                         "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 border-2",
                                         isActive 
-                                            ? "bg-primary-500 border-primary-500 text-white shadow-xl shadow-brand-500/20" 
+                                            ? "bg-brand-500 border-brand-500 text-white shadow-xl shadow-brand-500/20" 
                                             : "bg-white border-neutral-100 text-neutral-300",
-                                        isCurrent && "animate-pulse ring-8 ring-primary-50"
+                                        isCurrent && "animate-pulse ring-8 ring-brand-50"
                                     )}>
                                         <step.icon size={24} />
                                     </div>
@@ -151,7 +152,7 @@ const TrackOrder = () => {
                                         </p>
                                         <p className={cn(
                                             "text-[9px] font-bold uppercase",
-                                            isActive ? "text-primary-500" : "text-neutral-300"
+                                            isActive ? "text-brand-500" : "text-neutral-300"
                                         )}>
                                             {isCurrent ? 'Current Phase' : isActive ? 'Verified' : 'Pending'}
                                         </p>
@@ -187,7 +188,7 @@ const TrackOrder = () => {
                             {/* Map Floating UI */}
                             <div className="absolute bottom-8 left-8 right-8 z-[1000] flex justify-between items-end">
                                 <div className="bg-neutral-900/90 backdrop-blur-xl text-white p-6 rounded-[2rem] shadow-2xl border border-white/10 flex items-center gap-6 animate-in slide-in-from-bottom-4 duration-500">
-                                    <div className="w-14 h-14 bg-primary-500 rounded-2xl flex items-center justify-center animate-bounce">
+                                    <div className="w-14 h-14 bg-brand-500 rounded-2xl flex items-center justify-center animate-bounce">
                                         <Navigation size={28} />
                                     </div>
                                     <div className="space-y-1">
@@ -198,31 +199,31 @@ const TrackOrder = () => {
                                 <div className="bg-white/90 backdrop-blur-xl p-3 rounded-2xl shadow-xl border border-white hidden md:block">
                                     <div className="flex gap-2">
                                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600">Satellite Signal: Optimal</p>
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600">Live Tracking: Active</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Fleet Information Sidebar */}
+                    {/* Delivery Information Sidebar */}
                     <div className="lg:col-span-4 space-y-6">
                         <Card className="p-10 bg-neutral-900 text-white rounded-[3rem] border-0 shadow-elite relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                            <h4 className="text-[11px] font-black uppercase tracking-[3px] text-primary-500 mb-8">Fleet Personnel</h4>
+                            <h4 className="text-[11px] font-black uppercase tracking-[3px] text-brand-500 mb-8">Delivery Partner</h4>
                             
                             {order.rider ? (
                                 <div className="space-y-8 relative z-10">
                                     <div className="flex items-center gap-6">
                                         <div className="w-20 h-20 bg-white/5 rounded-[2rem] border border-white/10 flex items-center justify-center relative group">
-                                            <User size={32} className="text-primary-400" />
+                                            <User size={32} className="text-brand-400" />
                                             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-neutral-900 flex items-center justify-center">
                                                 <ShieldCheck size={10} className="text-white" />
                                             </div>
                                         </div>
                                         <div className="space-y-1">
                                             <h3 className="text-xl font-display font-extrabold tracking-tight">{order.rider.name}</h3>
-                                            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Medical Courier Elite</p>
+                                            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Medical Delivery Partner</p>
                                         </div>
                                     </div>
 
@@ -230,7 +231,7 @@ const TrackOrder = () => {
                                         <button className="h-14 bg-white/10 hover:bg-white/20 rounded-2xl transition-all flex items-center justify-center gap-3 font-bold text-sm">
                                             <Phone size={18} /> Call
                                         </button>
-                                        <button className="h-14 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl transition-all flex items-center justify-center gap-3 font-bold text-sm shadow-xl shadow-brand-500/20">
+                                        <button className="h-14 bg-brand-500 hover:bg-brand-600 text-white rounded-2xl transition-all flex items-center justify-center gap-3 font-bold text-sm shadow-xl shadow-brand-500/20">
                                             <MessageSquare size={18} /> Chat
                                         </button>
                                     </div>
@@ -240,7 +241,7 @@ const TrackOrder = () => {
                                     <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto text-white/20">
                                         <Clock size={24} />
                                     </div>
-                                    <p className="text-xs text-white/40 font-bold uppercase tracking-widest px-6">Assigning Clinical Logistics Specialist...</p>
+                                    <p className="text-xs text-white/40 font-bold uppercase tracking-widest px-6">Assigning Delivery Partner...</p>
                                 </div>
                             )}
                         </Card>

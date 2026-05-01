@@ -185,17 +185,17 @@ const OrderManagement = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-admin-text-primary tracking-tight">Order Pipeline</h1>
-          <p className="text-xs text-admin-text-tertiary font-medium mt-0.5">Manage and track all clinical orders</p>
+          <h1 className="text-2xl font-bold text-admin-text-primary tracking-tight">Order Management</h1>
+          <p className="text-xs text-admin-text-tertiary font-medium mt-0.5">Manage and track all customer orders</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={fetchOrders} className="btn-admin btn-admin-secondary h-9 px-4">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-            <span className="text-xs">Refresh Pipeline</span>
+            <span className="text-xs">Refresh Records</span>
           </button>
           <button className="btn-admin btn-admin-primary h-9 px-4">
             <Download size={14} />
-            <span className="text-xs">Export Manifest</span>
+            <span className="text-xs">Export Records</span>
           </button>
         </div>
       </div>
@@ -220,7 +220,7 @@ const OrderManagement = () => {
       </div>
 
       <DataTable 
-        title="Order Registry"
+        title="Order Records"
         count={filteredOrders.length}
         columns={columns}
         data={filteredOrders}
@@ -272,7 +272,7 @@ const OrderManagement = () => {
                 {/* STATUS FLOW */}
                 <div className="space-y-4">
                    <div className="flex items-center justify-between">
-                      <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Protocol Status</h4>
+                      <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Order Status</h4>
                       <StatusBadge status={selectedOrder.status} />
                    </div>
                    <div className="grid grid-cols-2 gap-3">
@@ -295,7 +295,7 @@ const OrderManagement = () => {
 
                 {/* CUSTOMER INFO */}
                 <div className="space-y-4">
-                   <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Customer Intel</h4>
+                   <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Customer Details</h4>
                    <div className="p-4 bg-admin-bg rounded-xl border border-admin-border-2 flex gap-4">
                       <div className="w-12 h-12 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green font-bold text-lg">
                         {selectedOrder.user?.name?.charAt(0).toUpperCase()}
@@ -310,7 +310,7 @@ const OrderManagement = () => {
 
                 {/* DELIVERY */}
                 <div className="space-y-4">
-                   <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Logistics</h4>
+                   <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Shipping Information</h4>
                    <div className="space-y-3">
                       <div className="flex gap-3">
                         <MapPin size={16} className="text-admin-text-tertiary mt-0.5 shrink-0" />
@@ -328,7 +328,7 @@ const OrderManagement = () => {
 
                 {/* ITEMS */}
                 <div className="space-y-4">
-                   <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Cargo Manifest</h4>
+                   <h4 className="text-[11px] font-bold text-admin-text-tertiary uppercase tracking-widest">Ordered Items</h4>
                    <div className="divide-y divide-admin-border-2 border border-admin-border rounded-xl overflow-hidden">
                       {selectedOrder.items.map((item, i) => (
                         <div key={i} className="p-4 flex items-center gap-4 bg-white hover:bg-admin-bg transition-colors">

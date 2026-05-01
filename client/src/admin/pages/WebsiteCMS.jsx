@@ -282,7 +282,7 @@ const WebsiteCMS = () => {
                   <div className="space-y-4">
                     <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Chrome Aesthetic</label>
                     <div className="flex items-center gap-4">
-                      {['#22C55E', '#3B82F6', '#F59E0B', '#EF4444', '#0F172A'].map((c) => (
+                      {['#024F3A', '#3B82F6', '#F59E0B', '#EF4444', '#0F172A'].map((c) => (
                         <button key={c} className="w-10 h-10 rounded-2xl shadow-xl border-4 border-white transition-transform hover:scale-125" style={{ backgroundColor: c }} />
                       ))}
                       <button className="w-10 h-10 rounded-2xl bg-neutral-50 border-2 border-dashed border-neutral-200 flex items-center justify-center text-neutral-300">+</button>

@@ -65,7 +65,7 @@ const AdminLogin = () => {
         <div className="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] bg-blue-500/5 blur-[120px] rounded-full" />
         
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-9 h-9 bg-brand-green rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(22,163,74,0.4)]">
+          <div className="w-9 h-9 bg-brand-green rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(0,200,83,0.4)]">
             <ShieldCheck className="text-white w-5 h-5" strokeWidth={3} />
           </div>
           <div>
@@ -73,7 +73,6 @@ const AdminLogin = () => {
               <span className="text-white font-bold text-lg tracking-tight">Medi</span>
               <span className="text-brand-green-lt font-bold text-lg tracking-tight">Cheap</span>
             </div>
-            <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em] leading-none mt-1">Institutional OS</p>
           </div>
         </div>
 

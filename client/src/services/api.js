@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '../constants';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: API_URL,
   withCredentials: true,
   timeout: 15000
 });
@@ -138,8 +139,10 @@ export const chatService = {
 
 export const prescriptionService = {
   upload: (data) => api.post('/api/prescriptions/upload', data),
-  getMyPrescriptions: () => api.get('/api/prescriptions/my'),
-  getById: (id) => api.get(`/api/prescriptions/${id}`)
+  getMyPrescriptions: (params) => api.get('/api/prescriptions/mine', { params }),
+  getById: (id) => api.get(`/api/prescriptions/${id}`),
+  delete: (id) => api.delete(`/api/prescriptions/${id}`),
+  reupload: (id, data) => api.post(`/api/prescriptions/${id}/reupload`, data)
 };
 
 export const couponService = {

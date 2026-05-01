@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { API_URL } from '../constants';
 
-const API_URL = 'http://localhost:5000/api/addresses';
+const ADDRESS_API_URL = `${API_URL}/api/addresses`;
 
 export const useAddressStore = create((set, get) => ({
   addresses: [],
@@ -11,7 +12,7 @@ export const useAddressStore = create((set, get) => ({
   fetchAddresses: async () => {
     set({ loading: true });
     try {
-      const response = await axios.get(API_URL, { withCredentials: true });
+      const response = await axios.get(ADDRESS_API_URL, { withCredentials: true });
       set({ addresses: response.data, loading: false });
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to fetch addresses', loading: false });
@@ -21,7 +22,7 @@ export const useAddressStore = create((set, get) => ({
   addAddress: async (addressData) => {
     set({ loading: true });
     try {
-      const response = await axios.post(API_URL, addressData, { withCredentials: true });
+      const response = await axios.post(ADDRESS_API_URL, addressData, { withCredentials: true });
       set((state) => ({ 
         addresses: [response.data, ...state.addresses.map(a => addressData.isDefault ? {...a, isDefault: false} : a)],
         loading: false 
@@ -36,7 +37,7 @@ export const useAddressStore = create((set, get) => ({
   updateAddress: async (id, addressData) => {
     set({ loading: true });
     try {
-      const response = await axios.put(`${API_URL}/${id}`, addressData, { withCredentials: true });
+      const response = await axios.put(`${ADDRESS_API_URL}/${id}`, addressData, { withCredentials: true });
       set((state) => ({
         addresses: state.addresses.map((a) => (a._id === id ? response.data : (addressData.isDefault ? {...a, isDefault: false} : a))),
         loading: false
@@ -50,7 +51,7 @@ export const useAddressStore = create((set, get) => ({
 
   deleteAddress: async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`, { withCredentials: true });
+      await axios.delete(`${ADDRESS_API_URL}/${id}`, { withCredentials: true });
       set((state) => ({
         addresses: state.addresses.filter((a) => a._id !== id)
       }));
@@ -61,7 +62,7 @@ export const useAddressStore = create((set, get) => ({
 
   setDefault: async (id) => {
     try {
-      const response = await axios.patch(`${API_URL}/${id}/default`, {}, { withCredentials: true });
+      const response = await axios.patch(`${ADDRESS_API_URL}/${id}/default`, {}, { withCredentials: true });
       set((state) => ({
         addresses: state.addresses.map((a) => (a._id === id ? {...a, isDefault: true} : {...a, isDefault: false}))
       }));

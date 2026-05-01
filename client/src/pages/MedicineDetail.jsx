@@ -97,7 +97,7 @@ const MedicineDetail = () => {
     };
 
     if (loading) return (
-        <div className="container-custom pt-32 pb-20 animate-pulse">
+        <div className="container-custom pb-20 animate-pulse">
             <div className="grid lg:grid-cols-2 gap-16">
                 <div className="aspect-square bg-neutral-100 rounded-[2.5rem]" />
                 <div className="space-y-8">
@@ -118,7 +118,7 @@ const MedicineDetail = () => {
     const discountPct = originalPrice > 0 ? Math.round((savings / originalPrice) * 100) : 0;
 
     return (
-        <div className="bg-neutral-25 min-h-screen pt-24 pb-20 font-body selection:bg-brand-600/10">
+        <div className="bg-neutral-25 min-h-screen pb-20 font-body selection:bg-brand-600/10">
             <div className="container-custom">
                 {/* 🧭 CLINICAL BREADCRUMB */}
                 <nav className="flex items-center gap-3 text-[11px] font-bold text-neutral-400 mb-10 overflow-x-auto whitespace-nowrap no-scrollbar uppercase tracking-widest">
@@ -330,7 +330,7 @@ const MedicineDetail = () => {
                                 {activeTab === tab.id && (
                                     <motion.div
                                         layoutId="tabUnderlineDetail"
-                                        className="absolute bottom-[-2px] left-0 w-full h-1 bg-brand-primary rounded-full shadow-[0_0_12px_rgba(22,163,74,0.4)]"
+                                        className="absolute bottom-[-2px] left-0 w-full h-1 bg-brand-primary rounded-full shadow-[0_0_12px_rgba(0,200,83,0.4)]"
                                     />
                                 )}
                             </button>

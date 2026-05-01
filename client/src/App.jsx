@@ -81,6 +81,7 @@ import { SocketProvider } from './providers/SocketProvider';
 import AnalyticsTracker from './components/common/AnalyticsTracker';
 
 import { useAuthStore } from './store/authStore';
+import { useSettingsStore } from './store/settingsStore';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, roles = [] }) => {
@@ -107,43 +108,27 @@ const ProtectedRoute = ({ children, roles = [] }) => {
 
 // Maintenance Guard
 const MaintenanceGuard = ({ children }) => {
-  const [isActive, setIsActive] = React.useState(true);
-  const [loading, setLoading] = React.useState(true);
+  const { settings, isLoaded } = useSettingsStore();
   const location = useLocation();
 
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const response = await settingService.getSettings();
-        // API returns { success, settings } — not wrapped in .data
-        const settings = response.data?.settings || response.data?.data?.settings;
-        if (settings) {
-          setIsActive(settings.is_active !== false);
-        }
-      } catch (error) {
-        console.error('Status check failed');
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkStatus();
-  }, []);
-
-  if (loading) return (
+  // If not loaded yet, show minimal loading
+  if (!isLoaded) return (
     <div className="h-screen w-full flex flex-col items-center justify-center bg-white gap-6">
       <div className="w-16 h-16 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin" />
-      <div className="flex flex-col items-center gap-2">
-        <h2 className="text-xl font-bold text-neutral-900">Synchronizing Health Node...</h2>
-        <p className="text-sm text-neutral-400 font-medium">Verifying Clinical Protocols</p>
-      </div>
     </div>
   );
-  if (!isActive && !location.pathname.startsWith('/admin')) {
-    return <MaintenanceMode />;
+
+  // Check if maintenance is active
+  const isMaintenance = settings.is_active === false;
+
+  if (isMaintenance && location.pathname !== '/maintenance') {
+    return <Navigate to="/maintenance" replace />;
   }
 
   return children;
 };
+
+
 
 // Page Wrapper for premium motion transitions
 const PageWrapper = ({ children }) => {
@@ -160,6 +145,7 @@ const PageWrapper = ({ children }) => {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.5, ease: [0.19, 1.0, 0.22, 1.0] }}
       className="min-h-[calc(100vh-64px)] bg-white"
+      style={pathname !== '/' ? { paddingTop: 'var(--navbar-height)' } : {}}
     >
       {children}
     </motion.div>
@@ -170,10 +156,12 @@ import UserLayout from './components/layout/UserLayout';
 
 const App = () => {
   const { getMe } = useAuthStore();
+  const { fetchSettings } = useSettingsStore();
   
   useEffect(() => {
     getMe();
-  }, [getMe]);
+    fetchSettings();
+  }, [getMe, fetchSettings]);
 
   return (
     <HelmetProvider>

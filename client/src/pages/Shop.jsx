@@ -42,7 +42,7 @@ const SPOTLIGHTS = [
     { id: 'diabetes', name: 'Diabetes Care', sub: 'Complete Diabetes Management', bg: 'linear-gradient(135deg,#EFF6FF,#DBEAFE)', icon: Activity, accent: '#2563EB' },
     { id: 'cardiac', name: 'Cardiac Care', sub: 'Heart Health Essentials', bg: 'linear-gradient(135deg,#FFF1F2,#FFE4E6)', icon: Heart, accent: '#DC2626' },
     { id: 'mother-baby', name: 'Mother & Baby', sub: 'Everything for Mom & Baby', bg: 'linear-gradient(135deg,#FAF5FF,#EDE9FE)', icon: Baby, accent: '#9333EA' },
-    { id: 'wellness', name: 'Wellness & Fitness', sub: 'Fitness & Active Lifestyle', bg: 'linear-gradient(135deg,#ECFDF5,#D1FAE5)', icon: Dumbbell, accent: '#16A34A' },
+    { id: 'wellness', name: 'Wellness & Fitness', sub: 'Fitness & Active Lifestyle', bg: 'linear-gradient(135deg,#F0FDF4,#DCFCE7)', icon: Dumbbell, accent: '#024F3A' },
     { id: 'vitamins', name: 'Vitamins & Supplements', sub: 'Daily Nutrition Essentials', bg: 'linear-gradient(135deg,#FFFBEB,#FEF3C7)', icon: Sun, accent: '#F59E0B' },
     { id: 'skincare', name: 'Skincare', sub: 'Dermatologist Tested', bg: 'linear-gradient(135deg,#F0FDFA,#CCFBF1)', icon: Sparkles, accent: '#0D9488' }
 ];
@@ -184,7 +184,7 @@ const ProductCard = ({ product, viewMode }) => {
                 </div>
                 <div className="flex-1 min-w-0">
                     <p className="font-body text-[11px] font-semibold text-[var(--green-700)] uppercase tracking-widest mb-1 truncate">{product.brand}</p>
-                    <h3 className="font-display text-[15px] font-semibold text-[var(--gray-900)] leading-snug mb-2 line-clamp-2">{product.name}</h3>
+                    <h3 className="font-display text-[15px] font-black text-[var(--gray-900)] leading-snug mb-2 line-clamp-2 uppercase tracking-tight">{product.name}</h3>
                     <div className="flex items-center gap-2 mb-2">
                         <div className="flex items-center"><Star size={12} className="text-[#F59E0B] fill-[#F59E0B]" /><Star size={12} className="text-[#F59E0B] fill-[#F59E0B]" /><Star size={12} className="text-[#F59E0B] fill-[#F59E0B]" /><Star size={12} className="text-[#F59E0B] fill-[#F59E0B]" /><Star size={12} className="text-[var(--gray-200)] fill-[var(--gray-200)]" /></div>
                         <span className="font-body text-[12px] font-semibold text-[var(--gray-700)]">4.8</span>
@@ -196,7 +196,7 @@ const ProductCard = ({ product, viewMode }) => {
                         {discount > 0 && <div className="font-mono text-[13px] text-[var(--gray-400)] line-through">₹{product.mrp}</div>}
                     </div>
                     {/* Add Button logic... (same as grid, simplified for list) */}
-                    <button onClick={handleAdd} className="w-full h-[36px] bg-gradient-to-br from-[var(--green-600)] to-[var(--green-700)] text-white font-body font-semibold text-[12px] rounded-[var(--r-sm)] shadow-[0_2px_10px_rgba(22,163,74,0.25)] hover:-translate-y-px transition-all">Add to Cart</button>
+                    <button onClick={handleAdd} className="w-full h-[36px] bg-gradient-to-br from-[var(--green-600)] to-[var(--green-700)] text-white font-body font-semibold text-[12px] rounded-[var(--r-sm)] shadow-[0_2px_10px_rgba(5, 150, 105, 0.25)] hover:-translate-y-px transition-all">Add to Cart</button>
                 </div>
             </motion.div>
         );
@@ -230,7 +230,10 @@ const ProductCard = ({ product, viewMode }) => {
 
             <div className="product-card-content">
                 <p className="font-body text-[11px] font-semibold text-[var(--green-700)] uppercase tracking-widest mb-1 truncate">{product.brand || 'MediCheap'}</p>
-                <h3 className="font-display text-[14px] font-semibold text-[var(--gray-900)] leading-[1.38] line-clamp-2 min-h-[38px] mb-2">{product.name}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-display text-[14px] font-black text-[var(--gray-900)] leading-[1.38] line-clamp-2 min-h-[38px] uppercase tracking-tight">{product.name}</h3>
+                    <BadgeCheck size={14} className="text-brand-500 shrink-0" />
+                </div>
                 
                 <div className="flex items-center gap-[6px] mb-2">
                     <div className="flex items-center">
@@ -336,9 +339,9 @@ export default function Shop() {
                             <div className="eyebrow-dot" />
                             <span className="font-body text-[12px] font-medium text-white/70 tracking-[0.02em]">Verified Medicines · Fast Delivery</span>
                         </div>
-                        <h1 className="shop-banner-heading">Your Complete <br/><span className="text-shimmer">Health Store</span></h1>
+                        <h1 className="shop-banner-heading uppercase tracking-tighter">Clinical <br/><span className="text-shimmer">Pharma Registry.</span></h1>
                         <p className="font-body text-[15px] text-white/60 leading-[1.7] max-w-[420px] mb-6">
-                            Medicines, vitamins, devices & wellness — 100% genuine, delivered same day.
+                            Secure acquisition of board-certified medical units, vitamins & clinical supplies. Real-time node inventory sync active.
                         </p>
                         
                         <div className="shop-search-bar">
@@ -413,58 +416,91 @@ export default function Shop() {
             </AnimatePresence>
 
             {/* ━━━ MAIN CONTENT ━━━ */}
-            <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-7 pb-[60px] flex gap-7 items-start relative">
+            <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-7 pb-[60px] flex flex-col gap-6 items-stretch relative">
                 
-                {/* 5. FILTER SIDEBAR (Desktop) */}
-                <aside className="shop-sidebar hidden lg:block">
-                    <div className="sidebar-card">
-                        <div className="sidebar-header">
-                            <div className="flex items-center gap-2"><SlidersHorizontal size={15} className="text-[var(--gray-400)]"/><span className="font-display font-bold text-[15px] text-[var(--gray-900)]">Filters</span></div>
-                            {activeFilterCount > 0 && <button onClick={clearAllFilters} className="font-body font-medium text-[12px] text-[var(--red-500)] hover:underline border-none bg-transparent cursor-pointer">Reset</button>}
-                        </div>
+                {/* 5. HORIZONTAL REFINEMENT BAR (Desktop) */}
+                <div className="shop-refinement-bar hidden lg:flex items-center gap-4 bg-white border border-[var(--gray-200)] rounded-[var(--r-xl)] p-3 px-5 shadow-[var(--shadow-sm)] sticky top-[162px] z-30">
+                    <div className="flex items-center gap-2 pr-4 border-r border-[var(--gray-100)]">
+                        <SlidersHorizontal size={16} className="text-[var(--green-600)]" />
+                        <span className="font-display font-bold text-[14px] text-[var(--gray-900)] whitespace-nowrap">Filter By:</span>
+                    </div>
 
-                        {/* Price Section */}
-                        <div>
-                            <div className="filter-section-header" onClick={() => setOpenSections(p=>({...p, price: !p.price}))}>
+                    <div className="flex flex-1 items-center gap-3">
+                        {/* Price Dropdown */}
+                        <div className="relative group/dropdown">
+                            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--gray-50)] hover:bg-[var(--gray-100)] border border-[var(--gray-200)] rounded-[var(--r-md)] transition-all">
                                 <span className="font-body font-semibold text-[13px] text-[var(--gray-700)]">Price Range</span>
-                                <ChevronDown size={15} className={`text-[var(--gray-400)] transition-transform duration-250 ${openSections.price ? 'rotate-180' : ''}`} />
+                                <ChevronDown size={14} className="text-[var(--gray-400)] transition-transform group-hover/dropdown:rotate-180" />
+                            </button>
+                            <div className="absolute top-full left-0 mt-2 w-[280px] bg-white border border-[var(--gray-200)] rounded-[var(--r-lg)] shadow-[var(--shadow-lg)] opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-50 p-4">
+                                <PriceSlider value={maxPrice} onChange={val => updateFilter('maxPrice', val)} />
                             </div>
-                            <AnimatePresence>{openSections.price && (
-                                <motion.div variants={collapseAnim} initial="initial" animate="animate" exit="exit" className="overflow-hidden">
-                                    <div className="px-[18px] py-3 border-b border-[var(--gray-50)]">
-                                        <PriceSlider value={maxPrice} onChange={val => updateFilter('maxPrice', val)} />
-                                    </div>
-                                </motion.div>
-                            )}</AnimatePresence>
                         </div>
 
-                        {/* Availability Section */}
-                        <div>
-                            <div className="filter-section-header" onClick={() => setOpenSections(p=>({...p, avail: !p.avail}))}>
-                                <span className="font-body font-semibold text-[13px] text-[var(--gray-700)]">Availability & Features</span>
-                                <ChevronDown size={15} className={`text-[var(--gray-400)] transition-transform duration-250 ${openSections.avail ? 'rotate-180' : ''}`} />
+                        {/* Availability Dropdown */}
+                        <div className="relative group/dropdown">
+                            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--gray-50)] hover:bg-[var(--gray-100)] border border-[var(--gray-200)] rounded-[var(--r-md)] transition-all">
+                                <span className="font-body font-semibold text-[13px] text-[var(--gray-700)]">Refinement</span>
+                                <ChevronDown size={14} className="text-[var(--gray-400)] transition-transform group-hover/dropdown:rotate-180" />
+                            </button>
+                            <div className="absolute top-full left-0 mt-2 w-[240px] bg-white border border-[var(--gray-200)] rounded-[var(--r-lg)] shadow-[var(--shadow-lg)] opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-50 p-4 space-y-1">
+                                <CustomToggle label="In Stock Only" checked={true} onChange={()=>{}} />
+                                <CustomToggle label="Has Discount" checked={false} onChange={()=>{}} />
+                                <CustomToggle label="Rx Required" checked={type.includes('POM')} onChange={()=>{
+                                    const newTypes = type.includes('POM') ? type.filter(t=>t!=='POM') : [...type, 'POM'];
+                                    updateFilter('type', newTypes.join(','));
+                                }} />
                             </div>
-                            <AnimatePresence>{openSections.avail && (
-                                <motion.div variants={collapseAnim} initial="initial" animate="animate" exit="exit" className="overflow-hidden">
-                                    <div className="px-[18px] py-2 border-b border-[var(--gray-50)]">
-                                        <CustomToggle label="In Stock Only" checked={true} onChange={()=>{}} />
-                                        <CustomToggle label="Has Discount" checked={false} onChange={()=>{}} />
-                                        <CustomToggle label="Rx Required" checked={type.includes('POM')} onChange={()=>{
-                                            const newTypes = type.includes('POM') ? type.filter(t=>t!=='POM') : [...type, 'POM'];
-                                            updateFilter('type', newTypes.join(','));
-                                        }} />
-                                    </div>
-                                </motion.div>
-                            )}</AnimatePresence>
+                        </div>
+                        
+                        {/* Active Filter Chips (Inline) */}
+                        <div className="flex items-center gap-2 ml-4">
+                            {activeFilterCount > 0 && <div className="w-[1px] h-6 bg-[var(--gray-100)] mr-2" />}
+                            <AnimatePresence>
+                                {category !== 'All' && (
+                                    <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex items-center gap-1.5 px-3 py-1 bg-[var(--green-50)] border border-[var(--green-200)] rounded-full font-body text-[12px] font-semibold text-[var(--green-700)]">
+                                        {category} <X size={12} className="cursor-pointer" onClick={()=>updateFilter('category', 'All')}/>
+                                    </motion.div>
+                                )}
+                                {maxPrice !== 5000 && (
+                                    <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex items-center gap-1.5 px-3 py-1 bg-[var(--blue-50)] border border-[var(--blue-200)] rounded-full font-body text-[12px] font-semibold text-[var(--blue-700)]">
+                                        ≤ ₹{maxPrice} <X size={12} className="cursor-pointer" onClick={()=>updateFilter('maxPrice', 5000)}/>
+                                    </motion.div>
+                                )}
+                                {type.includes('POM') && (
+                                    <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex items-center gap-1.5 px-3 py-1 bg-[var(--red-50)] border border-[var(--red-200)] rounded-full font-body text-[12px] font-semibold text-[var(--red-700)]">
+                                        Rx Only <X size={12} className="cursor-pointer" onClick={()=>{
+                                            updateFilter('type', type.filter(t=>t!=='POM').join(','));
+                                        }}/>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
-                </aside>
+
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <select value={sort} onChange={e => updateFilter('sort', e.target.value)} className="appearance-none bg-white border border-[var(--gray-200)] rounded-[var(--r-md)] py-[8px] pl-3 pr-8 font-body font-semibold text-[13px] text-[var(--gray-800)] cursor-pointer outline-none focus:border-[var(--green-600)] min-w-[150px]">
+                                <option value="relevance">Sort: Relevance</option>
+                                <option value="price">Price: Low to High</option>
+                                <option value="-price">Price: High to Low</option>
+                                <option value="-createdAt">Newest First</option>
+                            </select>
+                            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--gray-400)] pointer-events-none" />
+                        </div>
+
+                        <div className="bg-[var(--gray-100)] rounded-[var(--r-md)] p-[3px] flex gap-[2px]">
+                            <button onClick={()=>updateFilter('view','grid')} className={`w-[34px] h-[30px] flex items-center justify-center rounded-[var(--r-sm)] ${view==='grid'?'bg-white shadow-sm text-[var(--gray-900)]':'text-[var(--gray-400)]'}`}><LayoutGrid size={15}/></button>
+                            <button onClick={()=>updateFilter('view','list')} className={`w-[34px] h-[30px] flex items-center justify-center rounded-[var(--r-sm)] ${view==='list'?'bg-white shadow-sm text-[var(--gray-900)]':'text-[var(--gray-400)]'}`}><List size={15}/></button>
+                        </div>
+                    </div>
+                </div>
 
                 {/* 6. PRODUCT GRID AREA */}
                 <main className="shop-main">
                     
-                    {/* Controls Bar */}
-                    <div className="flex items-center justify-between flex-wrap gap-3 pb-4 mb-5 border-b border-[var(--gray-100)]">
+                    {/* Controls Bar (Mobile Only) */}
+                    <div className="lg:hidden flex items-center justify-between flex-wrap gap-3 pb-4 mb-5 border-b border-[var(--gray-100)]">
                         <div className="font-body text-[13px] text-[var(--gray-400)]">Showing {(page-1)*24 + 1}–{Math.min(page*24, total)} of {total.toLocaleString()} products</div>
                         
                         <div className="flex items-center gap-3">
@@ -476,11 +512,6 @@ export default function Shop() {
                                     <option value="-createdAt">Newest First</option>
                                 </select>
                                 <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--gray-400)] pointer-events-none" />
-                            </div>
-                            
-                            <div className="bg-[var(--gray-100)] rounded-[var(--r-md)] p-[3px] flex gap-[2px] hidden md:flex">
-                                <button onClick={()=>updateFilter('view','grid')} className={`w-[34px] h-[30px] flex items-center justify-center rounded-[var(--r-sm)] ${view==='grid'?'bg-white shadow-sm text-[var(--gray-900)]':'text-[var(--gray-400)]'}`}><LayoutGrid size={15}/></button>
-                                <button onClick={()=>updateFilter('view','list')} className={`w-[34px] h-[30px] flex items-center justify-center rounded-[var(--r-sm)] ${view==='list'?'bg-white shadow-sm text-[var(--gray-900)]':'text-[var(--gray-400)]'}`}><List size={15}/></button>
                             </div>
                         </div>
                     </div>

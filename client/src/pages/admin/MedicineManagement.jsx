@@ -221,7 +221,7 @@ const MedicineManagement = () => {
                                                         transition={{ duration: 1.5, ease: "circOut" }}
                                                         className={cn(
                                                             "h-full rounded-full transition-all duration-1000",
-                                                            med.stock < 10 ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' : 'bg-brand-primary shadow-[0_0_8px_rgba(22,163,74,0.4)]'
+                                                            med.stock < 10 ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' : 'bg-brand-primary shadow-[0_0_8px_rgba(0,200,83,0.4)]'
                                                         )} 
                                                     />
                                                 </div>

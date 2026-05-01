@@ -182,8 +182,8 @@ const Medicines = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-admin-text-primary tracking-tight">Medicine Registry</h1>
-          <p className="text-xs text-admin-text-tertiary font-medium mt-0.5">Manage pharmacopoeia and inventory levels</p>
+          <h1 className="text-2xl font-bold text-admin-text-primary tracking-tight">Medicine List</h1>
+          <p className="text-xs text-admin-text-tertiary font-medium mt-0.5">Manage product details and stock levels</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => navigate('/admin/medicines/import')} className="btn-admin btn-admin-secondary h-9 px-4">
@@ -204,7 +204,7 @@ const Medicines = () => {
           </div>
           <div>
             <p className="text-2xl font-bold text-admin-text-primary">{medicines.length}</p>
-            <p className="text-xs text-admin-text-tertiary font-medium">Total Active Nodes</p>
+            <p className="text-xs text-admin-text-tertiary font-medium">Total Products</p>
           </div>
         </div>
         <div className="page-card p-5 flex items-center gap-4">
@@ -222,13 +222,13 @@ const Medicines = () => {
           </div>
           <div>
             <p className="text-2xl font-bold text-admin-text-primary">{medicines.filter(m => m.isLive).length}</p>
-            <p className="text-xs text-admin-text-tertiary font-medium">Nodes Live on Store</p>
+            <p className="text-xs text-admin-text-tertiary font-medium">Products Live on Store</p>
           </div>
         </div>
       </div>
 
       <DataTable 
-        title="Pharmacopoeia"
+        title="Medicine Inventory"
         count={medicines.length}
         columns={columns}
         data={medicines}

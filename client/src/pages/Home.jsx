@@ -368,7 +368,7 @@ const Home = () => {
             {/* Hero Section */}
             <section className="relative bg-neutral-950 pt-32 pb-24 md:pt-48 md:pb-40 overflow-hidden">
                 {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: "radial-gradient(#22C55E 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: "radial-gradient(#024F3A 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
                 <div className="absolute top-1/2 right-0 w-[600px] h-[400px] bg-brand-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
 
                 <div className="container-custom relative z-10 grid lg:grid-cols-2 gap-16 items-center">
@@ -386,7 +386,7 @@ const Home = () => {
                             <span className="text-primary-500 relative">
                                 At Honest Prices
                                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 358 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 9C118.5 3 239.5 3 355 9" stroke="#22C55E" strokeWidth="6" strokeLinecap="round" />
+                                    <path d="M3 9C118.5 3 239.5 3 355 9" stroke="#024F3A" strokeWidth="6" strokeLinecap="round" />
                                 </svg>
                             </span>
                         </motion.h1>

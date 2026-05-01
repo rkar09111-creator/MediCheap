@@ -101,7 +101,7 @@ const CompanyCard = ({ company, onToggle, onDelete }) => {
           </div>
           <div className="flex flex-col items-end">
             <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">Visibility</span>
-            <div className={`w-2 h-2 rounded-full ${company.showOnWebsite ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-neutral-300'}`} title={company.showOnWebsite ? 'Visible on Website' : 'Hidden from Website'} />
+            <div className={`w-2 h-2 rounded-full ${company.showOnWebsite ? 'bg-green-500 shadow-[0_0_8px_rgba(0,200,83,0.5)]' : 'bg-neutral-300'}`} title={company.showOnWebsite ? 'Visible on Website' : 'Hidden from Website'} />
           </div>
         </div>
       </div>

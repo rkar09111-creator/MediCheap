@@ -99,7 +99,7 @@ const Companies = () => {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-20 overflow-hidden">
+      <section className="relative pb-20 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
         
         <div className="container mx-auto px-6 text-center space-y-8">
