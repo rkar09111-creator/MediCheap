@@ -86,12 +86,9 @@ const Navbar = () => {
 
   // Dynamic Layout Coupling Fix
   useEffect(() => {
-    const navbarHeight = isScrolled ? UI_CONSTANTS.NAVBAR_HEIGHT_SCROLLED : UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT;
-    const announcementHeight = showAnnouncement ? UI_CONSTANTS.ANNOUNCEMENT_HEIGHT : 0;
-    const totalHeight = navbarHeight + announcementHeight;
-    
+    const totalHeight = UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT + (showAnnouncement ? UI_CONSTANTS.ANNOUNCEMENT_HEIGHT : 0);
     document.documentElement.style.setProperty('--navbar-height', `${totalHeight}px`);
-  }, [isScrolled, showAnnouncement]);
+  }, [showAnnouncement]);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -154,35 +151,34 @@ const Navbar = () => {
 
       {/* 🔝 Main Navbar: FROSTED GLASS HUB */}
       <nav className={cn(
-        "w-full transition-all duration-500 ease-spring",
-        isMobileMenuOpen ? "bg-neutral-950" : (
-          isScrolled
-            ? `h-[${UI_CONSTANTS.NAVBAR_HEIGHT_SCROLLED}px] bg-white/92 backdrop-blur-[24px] saturate-[180%] border-b border-black/5 shadow-[0_2px_20px_rgba(0,0,0,0.06)]`
-            : cn(`h-[${UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT}px] bg-transparent border-transparent`, isHome ? "text-white" : "text-neutral-900")
-        )
+        "w-full transition-all duration-300",
+        `h-[${UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT}px]`,
+        isMobileMenuOpen ? "bg-neutral-950" : "bg-white/72 backdrop-blur-[32px] saturate-[180%] shadow-[0_4px_30px_rgba(0,0,0,0.03)] text-neutral-900"
       )}>
         <div className="container-custom h-full flex items-center justify-between">
           <Logo isScrolled={isScrolled} isHome={isHome} className="shrink-0" />
 
           {/* CENTER: HIGH-CONVERSION LINKS */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-12">
             {navLinks.map(link => (
               <NavLink
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) => cn(
-                  "text-[14px] font-medium transition-all px-5 py-2.5 rounded-full relative group",
-                  (isHome && !isScrolled) ? "text-white/90 hover:text-white" : "text-neutral-600 hover:text-brand-primary",
-                  isActive && (
-                    (isHome && !isScrolled)
-                      ? "text-white font-semibold bg-white/10"
-                      : "text-brand-primary font-semibold bg-brand-50"
-                  )
+                  "text-[14px] font-medium transition-all px-2 py-1 relative",
+                  isActive 
+                    ? "text-brand-primary font-black" 
+                    : "text-neutral-600 hover:text-brand-primary"
                 )}
               >
                 {link.name}
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 bg-brand-600/0 group-hover:bg-brand-600/5 rounded-full transition-all duration-300" />
+                {/* Underline indicator for active state */}
+                {({ isActive }) => isActive && (
+                  <motion.div 
+                    layoutId="navUnderline"
+                    className="absolute -bottom-1 left-2 right-2 h-0.5 bg-brand-primary rounded-full"
+                  />
+                )}
               </NavLink>
             ))}
           </div>
@@ -192,20 +188,14 @@ const Navbar = () => {
             {/* Search Toggle */}
             <button
               onClick={() => setShowSearchOverlay(true)}
-              className={cn(
-                "w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300",
-                (isHome && !isScrolled) ? "text-white hover:bg-white/10" : "text-neutral-600 hover:bg-neutral-50"
-              )}
+              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 text-neutral-600 hover:bg-neutral-50"
             >
               <Search size={20} strokeWidth={2.5} />
             </button>
 
             {/* Cart with Spring Notification */}
             <Link to="/cart" className="relative group">
-              <div className={cn(
-                "w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300",
-                (isHome && !isScrolled) ? "text-white hover:bg-white/10" : "text-neutral-700 hover:bg-neutral-50"
-              )}>
+              <div className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 text-neutral-700 hover:bg-neutral-50">
                 <ShoppingCart size={22} strokeWidth={2.5} />
               </div>
               <AnimatePresence>
@@ -239,12 +229,7 @@ const Navbar = () => {
                 <>
                   <button
                     onClick={() => navigate('/login')}
-                    className={cn(
-                      "h-10 px-6 rounded-full text-[14px] font-semibold transition-all border",
-                      (isHome && !isScrolled)
-                        ? "text-white border-white/30 hover:bg-white/10 hover:border-white"
-                        : "text-neutral-700 border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300"
-                    )}
+                    className="h-10 px-6 rounded-full text-[14px] font-semibold transition-all border text-neutral-700 border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300"
                   >
                     Login
                   </button>
@@ -260,10 +245,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Toggle */}
             <button
-              className={cn(
-                "lg:hidden p-2 transition-colors rounded-full",
-                (isHome && !isScrolled && !isMobileMenuOpen) ? "text-white hover:bg-white/10" : "text-neutral-900 hover:bg-neutral-100"
-              )}
+              className="lg:hidden p-2 transition-colors rounded-full text-neutral-900 hover:bg-neutral-100"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X size={26} className="text-white" /> : <Menu size={26} />}

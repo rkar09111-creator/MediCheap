@@ -283,7 +283,7 @@
   background: white;
   border-bottom: 1px solid var(--gray-100);
   position: sticky;
-  top: 108px; /* Below scrolled navbar (40px announcement + 68px nav) */
+  top: var(--navbar-height, 120px);
   z-index: 40;
   box-shadow: 0 1px 0 var(--gray-100);
 }
@@ -349,9 +349,12 @@
 
 /* ━━━ 5. REFINEMENT BAR (Horizontal) ━━━ */
 .shop-refinement-bar {
+  position: sticky;
+  top: calc(var(--navbar-height, 120px) + 53px);
+  z-index: 30;
   transition: all 300ms var(--ease);
 }
-.shop-refinement-bar.sticky {
+.shop-refinement-bar.is-sticky {
   box-shadow: var(--shadow-lg);
   border-color: var(--green-100);
 }

@@ -419,7 +419,7 @@ export default function Shop() {
             <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-7 pb-[60px] flex flex-col gap-6 items-stretch relative">
                 
                 {/* 5. HORIZONTAL REFINEMENT BAR (Desktop) */}
-                <div className="shop-refinement-bar hidden lg:flex items-center gap-4 bg-white border border-[var(--gray-200)] rounded-[var(--r-xl)] p-3 px-5 shadow-[var(--shadow-sm)] sticky top-[162px] z-30">
+                <div className="shop-refinement-bar hidden lg:flex items-center gap-4 bg-white border border-[var(--gray-200)] rounded-[var(--r-xl)] p-3 px-5 shadow-[var(--shadow-sm)]">
                     <div className="flex items-center gap-2 pr-4 border-r border-[var(--gray-100)]">
                         <SlidersHorizontal size={16} className="text-[var(--green-600)]" />
                         <span className="font-display font-bold text-[14px] text-[var(--gray-900)] whitespace-nowrap">Filter By:</span>
