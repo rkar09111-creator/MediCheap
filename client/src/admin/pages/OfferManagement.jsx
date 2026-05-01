@@ -135,7 +135,7 @@ const OfferManagement = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter">Offer Management.</h1>
-          <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mt-2">Institutional Promotion Engine • Dynamic Yield Control</p>
+          <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest mt-2">Clinical Promotion Engine • Dynamic Yield Control</p>
         </div>
         <button 
           onClick={handleSave}

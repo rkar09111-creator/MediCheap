@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
     ChevronRight,
@@ -23,7 +24,8 @@ import {
     Zap,
     FlaskConical,
     Stethoscope,
-    Lock
+    Lock,
+    ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Badge, Skeleton, cn } from '../components/ui';
@@ -57,522 +59,337 @@ const MedicineDetail = () => {
                         search: med.genericName, 
                         limit: 5 
                     });
-                }
-                
-                // Fallback to Category if no generic matches
-                if (!subRes || subRes.data.data.medicines.length <= 1) {
-                    subRes = await medicineService.getAll({ 
-                        category: med.category?._id || med.category,
-                        limit: 5 
-                    });
-                }
-
-                if (subRes?.data?.data?.medicines) {
-                    setSubstitutes(subRes.data.data.medicines.filter(m => m._id !== id).slice(0, 4));
+                    setSubstitutes(subRes.data.data.medicines.filter(m => m._id !== id));
                 }
             } catch (error) {
+                console.error(error);
                 toast.error('Medicine not found');
-                navigate('/shop');
             } finally {
                 setLoading(false);
             }
         };
         fetchMedicine();
-    }, [id, navigate]);
+    }, [id]);
 
-    // Conversion Timers & Viewer Counts
-    const [viewers, setViewers] = useState(Math.floor(Math.random() * 25) + 8);
-    const [timeLeft, setTimeLeft] = useState(1200); // 20 mins in seconds
-
-    useEffect(() => {
-        const vInterval = setInterval(() => setViewers(v => Math.max(5, v + (Math.random() > 0.5 ? 1 : -1))), 5000);
-        const tInterval = setInterval(() => setTimeLeft(t => (t > 0 ? t - 1 : 1200)), 1000);
-        return () => { clearInterval(vInterval); clearInterval(tInterval); };
-    }, []);
-
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}m ${secs}s`;
+    const handleAddToCart = () => {
+        if (medicine.stock <= 0) {
+            toast.error('Medicine out of stock');
+            return;
+        }
+        addItem(medicine, quantity);
+        toast.success(`${medicine.name} added to cart`);
     };
 
     if (loading) return (
-        <div className="container-custom pb-20 animate-pulse">
-            <div className="grid lg:grid-cols-2 gap-16">
-                <div className="aspect-square bg-neutral-100 rounded-[2.5rem]" />
+        <div className="container-custom py-12 space-y-12">
+            <div className="grid lg:grid-cols-2 gap-12">
+                <Skeleton className="aspect-square rounded-[3rem]" />
                 <div className="space-y-8">
-                    <div className="h-4 w-1/4 bg-neutral-100 rounded-full" />
-                    <div className="h-16 w-3/4 bg-neutral-100 rounded-2xl" />
-                    <div className="h-24 w-full bg-neutral-100 rounded-2xl" />
-                    <div className="h-16 w-full bg-neutral-100 rounded-2xl" />
+                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-16 w-48" />
                 </div>
             </div>
         </div>
     );
 
-    if (!medicine) return null;
+    if (!medicine) return (
+        <div className="h-[60vh] flex flex-col items-center justify-center gap-6">
+            <div className="w-20 h-20 bg-neutral-50 rounded-full flex items-center justify-center text-neutral-200">
+                <AlertCircle size={40} />
+            </div>
+            <h2 className="text-2xl font-black text-neutral-900 tracking-tight uppercase">Medicine Not Found</h2>
+            <Button onClick={() => navigate('/shop')} variant="ghost" className="font-bold text-brand-primary">Return to Catalog</Button>
+        </div>
+    );
 
-    const discountedPrice = medicine.sellingPrice || medicine.mrp || 0;
-    const originalPrice = medicine.mrp || medicine.sellingPrice || 0;
-    const savings = Math.max(0, originalPrice - discountedPrice);
-    const discountPct = originalPrice > 0 ? Math.round((savings / originalPrice) * 100) : 0;
+    const discount = Math.round(((medicine.mrp - medicine.sellingPrice) / medicine.mrp) * 100);
 
     return (
-        <div className="bg-neutral-25 min-h-screen pb-20 font-body selection:bg-brand-600/10">
-            <div className="container-custom">
-                {/* 🧭 CLINICAL BREADCRUMB */}
-                <nav className="flex items-center gap-3 text-[11px] font-bold text-neutral-400 mb-10 overflow-x-auto whitespace-nowrap no-scrollbar uppercase tracking-widest">
-                    <Link to="/" className="hover:text-brand-primary transition-colors">Registry</Link>
-                    <ChevronRight size={12} className="text-neutral-300" />
-                    <Link to="/shop" className="hover:text-brand-primary transition-colors">Clinical Hub</Link>
-                    <ChevronRight size={12} className="text-neutral-300" />
-                    <span className="text-neutral-900">{medicine.name}</span>
-                </nav>
+        <div className="bg-white min-h-screen pb-20 font-body">
+            <Helmet>
+                <title>{medicine.name} | MediCheap Pharmacy</title>
+            </Helmet>
 
-                <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-                    {/* 🖼️ LEFT: MEDIA & TRUST HUB */}
-                    <div className="space-y-8 lg:sticky lg:top-32">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.98 }}
+            {/* Breadcrumbs */}
+            <div className="container-custom py-8">
+                <div className="flex items-center gap-3 text-[11px] font-black text-neutral-400 uppercase tracking-widest">
+                    <Link to="/" className="hover:text-brand-primary transition-colors">Home</Link>
+                    <ChevronRight size={12} />
+                    <Link to="/shop" className="hover:text-brand-primary transition-colors">Pharmacy</Link>
+                    <ChevronRight size={12} />
+                    <Link to={`/shop?category=${medicine.category}`} className="hover:text-brand-primary transition-colors">{medicine.category}</Link>
+                    <ChevronRight size={12} />
+                    <span className="text-neutral-900 truncate max-w-[150px]">{medicine.name}</span>
+                </div>
+            </div>
+
+            <div className="container-custom grid lg:grid-cols-2 gap-16 xl:gap-24">
+                {/* Left: Visuals */}
+                <div className="space-y-8">
+                    <div className="aspect-square bg-neutral-50 rounded-[3rem] border border-neutral-100 p-12 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 to-transparent" />
+                        <motion.img
+                            initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="relative aspect-square bg-white rounded-[3rem] border border-neutral-100 shadow-xl shadow-neutral-200/50 overflow-hidden group flex items-center justify-center p-16"
+                            src={medicine.images?.[0]?.url || medicine.images?.[0]}
+                            alt={medicine.name}
+                            className="w-full h-full object-contain relative z-10 drop-shadow-2xl group-hover:scale-105 transition-transform duration-700"
+                        />
+                        {discount > 0 && (
+                            <div className="absolute top-8 left-8 bg-brand-primary text-white text-xs font-black px-4 py-1.5 rounded-full shadow-xl shadow-brand-primary/20 z-20 uppercase tracking-widest">
+                                Save {discount}%
+                            </div>
+                        )}
+                        <button 
+                            onClick={() => setIsWishlisted(!isWishlisted)}
+                            className="absolute top-8 right-8 w-14 h-14 bg-white/80 backdrop-blur-md rounded-full shadow-xl flex items-center justify-center text-neutral-400 hover:text-rose-500 transition-all z-20 group/heart"
                         >
-                            {/* Subtle Ambient Glow */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-brand-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                            <motion.img 
-                                whileHover={{ scale: 1.05 }}
-                                src={typeof medicine.images?.[0] === 'string' ? medicine.images[0] : (medicine.images?.[0]?.url || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=600')} 
-                                alt={medicine.name} 
-                                className="w-full h-full object-contain relative z-10 transition-transform duration-700"
-                            />
-
-                            {/* High-Trust Floating Badges */}
-                            <div className="absolute top-8 left-8 z-20 flex flex-col gap-3">
-                                <div className="px-4 py-2 bg-brand-500 text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-full shadow-lg shadow-brand-600/30 flex items-center gap-2">
-                                    <ShieldCheck size={14} /> Purity Assured
-                                </div>
-                                {medicine.requiresPrescription && (
-                                    <div className="px-4 py-2 bg-danger text-white text-[10px] font-black uppercase tracking-[0.15em] rounded-full shadow-lg shadow-danger/20 flex items-center gap-2">
-                                        <Lock size={14} /> Prescription Required
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="absolute top-8 right-8 z-20 flex flex-col gap-3">
-                                <button
-                                    onClick={() => setIsWishlisted(!isWishlisted)}
-                                    className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-100 flex items-center justify-center text-neutral-400 hover:text-danger transition-all active:scale-90"
-                                >
-                                    <Heart size={22} className={isWishlisted ? "fill-danger text-danger" : ""} />
-                                </button>
-                                <button className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-neutral-100 flex items-center justify-center text-neutral-400 hover:text-brand-primary transition-all active:scale-90">
-                                    <Share2 size={22} />
-                                </button>
-                            </div>
-
-                            {/* Verification Footer Overlay */}
-                            <div className="absolute bottom-8 left-8 right-8 z-20">
-                                <div className="bg-neutral-900/90 backdrop-blur-xl border border-white/10 p-5 rounded-2xl flex items-center gap-4 text-white">
-                                    <div className="w-12 h-12 bg-brand-600/20 text-brand-primary rounded-xl flex items-center justify-center shrink-0">
-                                        <BadgeCheck size={28} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest mb-0.5">Pharmacist Verified</p>
-                                        <p className="text-xs font-bold text-neutral-300">This batch has passed clinical integrity scans.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Thumbnail Cluster */}
-                        <div className="grid grid-cols-4 gap-4 px-4">
-                            {medicine.images?.map((img, i) => (
-                            <div key={i} className="aspect-square bg-white rounded-2xl border border-neutral-100 hover:border-brand-primary transition-all cursor-pointer overflow-hidden p-3 shadow-sm group">
-                                <img src={typeof img === 'string' ? img : img.url} alt="" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
-                            </div>
-                        ))}
-                        </div>
+                            <Heart size={24} className={cn("transition-transform group-active/heart:scale-125", isWishlisted && "fill-rose-500 text-rose-500")} />
+                        </button>
                     </div>
 
-                    {/* 📋 RIGHT: CLINICAL CONSOLE */}
-                    <div className="space-y-10">
-                        {/* Status Strip */}
-                        <div className="flex flex-wrap items-center gap-4">
-                            <Badge className="bg-neutral-100 text-neutral-600 border-neutral-200 px-4 py-1.5 font-black text-[10px] uppercase tracking-widest rounded-full">{medicine.category}</Badge>
-                            <div className="flex items-center gap-1.5 ml-2">
-                                <div className="flex text-accent-bright">
-                                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={16} fill={s <= Math.round(medicine.avgRating || 4.5) ? "currentColor" : "none"} strokeWidth={2.5} />)}
-                                </div>
-                                <span className="text-sm font-black text-neutral-900 ml-1">{medicine.avgRating?.toFixed(1) || '4.5'}</span>
-                                <span className="text-xs text-neutral-400 font-bold ml-1 uppercase tracking-widest">Clinical Rating</span>
+                    <div className="grid grid-cols-4 gap-4">
+                        {(medicine.images || []).map((img, i) => (
+                            <div key={i} className="aspect-square rounded-2xl bg-neutral-50 border border-neutral-100 p-3 hover:border-brand-primary transition-all cursor-pointer">
+                                <img src={img.url || img} className="w-full h-full object-contain" />
                             </div>
-                        </div>
-
-                        {/* Heading Area */}
-                        <div className="space-y-4">
-                            <h1 className="text-4xl md:text-6xl font-display font-black text-neutral-900 tracking-tight leading-[1.1]">{medicine.name}</h1>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-brand-50 rounded-lg flex items-center justify-center text-brand-primary">
-                                    <Stethoscope size={18} />
-                                </div>
-                                <p className="text-[13px] font-black text-brand-primary uppercase tracking-[0.2em]">{medicine.manufacturer || 'PHARMACEUTICAL GRADE'}</p>
-                            </div>
-                        </div>
-
-                        {/* Conversion Engine (Price & Urgency) */}
-                        <div className="bg-white rounded-[2.5rem] border border-neutral-100 shadow-xl shadow-neutral-200/40 overflow-hidden">
-                            {/* Urgent Message Bar */}
-                            <div className="bg-accent-light px-8 py-3 flex items-center justify-between border-b border-accent/10">
-                                <div className="flex items-center gap-2">
-                                    <Clock size={16} className="text-accent-dark animate-pulse" />
-                                    <span className="text-xs font-bold text-accent-dark">Order in <span className="font-black underline">{formatTime(timeLeft)}</span> for Same-Day Delivery</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Eye size={16} className="text-neutral-400" />
-                                    <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest">{viewers} Patients Viewing</span>
-                                </div>
-                            </div>
-
-                            <div className="p-8 space-y-8">
-                                <div className="flex items-end justify-between">
-                                    <div className="space-y-1">
-                                        <p className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em]">Patient Price</p>
-                                        <div className="flex items-baseline gap-4">
-                                            <span className="font-price text-5xl font-black text-neutral-900 tracking-tighter">₹{discountedPrice}</span>
-                                            {savings > 0 && (
-                                                <span className="text-2xl text-neutral-300 line-through font-bold decoration-neutral-300/50 decoration-2">₹{originalPrice}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {savings > 0 && (
-                                        <div className="bg-brand-50 border border-brand-100 px-4 py-2 rounded-2xl text-center">
-                                            <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">Total Savings</p>
-                                            <p className="text-lg font-black text-brand-primary">Save ₹{savings} ({discountPct}%)</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Action Matrix */}
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <div className="h-16 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center px-3 group focus-within:border-brand-600/30 transition-all">
-                                        <button
-                                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                            className="w-12 h-12 rounded-xl hover:bg-white transition-all flex items-center justify-center text-neutral-400 hover:text-brand-primary shadow-sm"
-                                        >
-                                            <Minus size={20} strokeWidth={3} />
-                                        </button>
-                                        <span className="w-16 text-center font-price font-black text-2xl text-neutral-900">{quantity}</span>
-                                        <button
-                                            onClick={() => setQuantity(Math.min(medicine.stock, quantity + 1))}
-                                            className="w-12 h-12 rounded-xl hover:bg-white transition-all flex items-center justify-center text-neutral-400 hover:text-brand-primary shadow-sm"
-                                        >
-                                            <Plus size={20} strokeWidth={3} />
-                                        </button>
-                                    </div>
-                                    <Button
-                                        onClick={() => {
-                                            addItem(medicine, quantity);
-                                            toast.success(`${medicine.name} added to clinical vault`);
-                                        }}
-                                        disabled={medicine.stock <= 0}
-                                        className="flex-1 h-16 bg-brand-primary hover:bg-brand-primary-dark text-white font-black text-lg rounded-2xl shadow-xl shadow-brand-600/20 active:scale-[0.98] transition-all flex items-center justify-center gap-4"
-                                    >
-                                        <ShoppingCart size={24} strokeWidth={2.5} />
-                                        <span>Place in Cart</span>
-                                    </Button>
-                                </div>
-
-                                {/* Trust Metrics Strip */}
-                                <div className="grid grid-cols-3 gap-4 pt-4">
-                                    <div className="flex flex-col items-center gap-1.5">
-                                        <div className="w-10 h-10 bg-neutral-50 rounded-full flex items-center justify-center text-neutral-400 group hover:text-brand-primary transition-colors">
-                                            <Truck size={20} />
-                                        </div>
-                                        <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">Express Ship</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-1.5">
-                                        <div className="w-10 h-10 bg-neutral-50 rounded-full flex items-center justify-center text-neutral-400 group hover:text-brand-primary transition-colors">
-                                            <RotateCcw size={20} />
-                                        </div>
-                                        <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">Easy Return</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-1.5">
-                                        <div className="w-10 h-10 bg-neutral-50 rounded-full flex items-center justify-center text-neutral-400 group hover:text-brand-primary transition-colors">
-                                            <Zap size={20} />
-                                        </div>
-                                        <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">Instant Bill</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* 📋 DETAILED SPECIFICATION TERMINAL */}
-                <div className="mt-32">
-                    <div className="flex items-center gap-2 mb-12 border-b border-neutral-100 pb-2 overflow-x-auto no-scrollbar">
-                        {[
-                            { id: 'overview', label: 'Clinical Overview', icon: Info },
-                            { id: 'protocol', label: 'Dosage Protocol', icon: Calendar },
-                            { id: 'safety', label: 'Safety Precautions', icon: ShieldAlert }
-                        ].map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={cn(
-                                    "px-10 py-5 font-display font-black text-sm tracking-[0.1em] transition-all relative flex items-center gap-3 uppercase",
-                                    activeTab === tab.id ? "text-brand-primary" : "text-neutral-400 hover:text-neutral-900"
-                                )}
-                            >
-                                <tab.icon size={18} />
-                                {tab.label}
-                                {activeTab === tab.id && (
-                                    <motion.div
-                                        layoutId="tabUnderlineDetail"
-                                        className="absolute bottom-[-2px] left-0 w-full h-1 bg-brand-primary rounded-full shadow-[0_0_12px_rgba(0,200,83,0.4)]"
-                                    />
-                                )}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="max-w-5xl">
-                        <AnimatePresence mode="wait">
-                            {activeTab === 'overview' && (
-                                <motion.div
-                                    key="overview"
-                                    initial={{ opacity: 0, y: 15 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -15 }}
-                                    className="grid md:grid-cols-5 gap-12"
-                                >
-                                    <div className="md:col-span-3 space-y-10">
-                                        <div className="space-y-4">
-                                            <h3 className="text-3xl font-display font-black text-neutral-900 tracking-tight">Executive Summary</h3>
-                                            <p className="text-neutral-500 leading-relaxed text-lg font-medium">{medicine.description}</p>
-                                        </div>
-                                        <div className="p-8 bg-white rounded-[2.5rem] border border-neutral-100 shadow-sm flex items-center gap-8">
-                                            <div className="w-20 h-20 bg-brand-50 rounded-3xl flex items-center justify-center text-brand-primary shadow-inner">
-                                                <Activity size={36} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[11px] font-black text-neutral-400 uppercase tracking-widest mb-1">Active Ingredient</p>
-                                                <p className="text-2xl font-black text-neutral-900 tracking-tight">{medicine.genericName || 'Proprietary Molecule'}</p>
-                                                <p className="text-xs text-neutral-500 font-medium mt-1">Pharmacological identification verified by central registry.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="md:col-span-2 space-y-6">
-                                        <div className="bg-neutral-50 p-8 rounded-[2.5rem] border border-neutral-100 space-y-6">
-                                            <h4 className="text-[11px] font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-200 pb-2">Technical Properties</h4>
-                                            <div className="space-y-6">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-sm font-bold text-neutral-500">Formulation</span>
-                                                    <span className="text-sm font-black text-neutral-900 uppercase">{medicine.category}</span>
-                                                </div>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-sm font-bold text-neutral-500">Unit Count</span>
-                                                    <span className="text-sm font-black text-neutral-900 uppercase">Per Strip/Pack</span>
-                                                </div>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-sm font-bold text-neutral-500">Batch Grade</span>
-                                                    <span className="px-3 py-1 bg-brand-primary text-white text-[10px] font-black rounded-lg">ELITE</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {activeTab === 'protocol' && (
-                                <motion.div
-                                    key="protocol"
-                                    initial={{ opacity: 0, y: 15 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -15 }}
-                                    className="grid md:grid-cols-2 gap-12"
-                                >
-                                    <div className="space-y-8">
-                                        <h3 className="text-3xl font-display font-black text-neutral-900 tracking-tight">Standard Protocol</h3>
-                                        <div className="space-y-4">
-                                            {[
-                                                "Consume 1 tablet with 200ml of water, preferably after clinical intake.",
-                                                "Ensure consistent timing intervals to maintain plasma levels.",
-                                                "Store at 15°C - 30°C in an airtight pharmaceutical container.",
-                                                "Do not modify dosage without pharmacist or MD approval."
-                                            ].map((step, i) => (
-                                                <div key={i} className="p-6 bg-white rounded-2xl border border-neutral-100 flex gap-6 items-center hover:border-brand-600/30 transition-all group">
-                                                    <div className="w-12 h-12 rounded-xl bg-neutral-50 text-neutral-400 font-black flex items-center justify-center shrink-0 group-hover:bg-brand-primary group-hover:text-white transition-all">
-                                                        0{i + 1}
-                                                    </div>
-                                                    <p className="text-neutral-600 font-bold leading-relaxed">{step}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div className="bg-brand-900 rounded-[3rem] p-12 text-white relative overflow-hidden shadow-2xl shadow-brand-900/30">
-                                        <FlaskConical size={120} className="absolute bottom-[-30px] right-[-30px] opacity-10 rotate-12" />
-                                        <div className="relative z-10 space-y-6">
-                                            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center">
-                                                <Zap className="text-brand-primary" size={32} />
-                                            </div>
-                                            <h4 className="text-2xl font-black">Clinical Efficiency</h4>
-                                            <p className="text-neutral-400 leading-relaxed font-medium">This molecule is optimized for rapid bioavailability. Standard absorption cycle begins within 20-30 minutes of clinical ingestion.</p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {activeTab === 'safety' && (
-                                <motion.div
-                                    key="safety"
-                                    initial={{ opacity: 0, y: 15 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -15 }}
-                                    className="space-y-12"
-                                >
-                                    <div className="bg-danger/5 border border-danger/10 p-10 rounded-[3rem] flex flex-col md:flex-row gap-8 items-center">
-                                        <div className="w-20 h-20 bg-danger text-white rounded-[2rem] flex items-center justify-center shadow-xl shadow-danger/20 shrink-0">
-                                            <AlertCircle size={40} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <h4 className="text-2xl font-black text-danger uppercase tracking-tight">Critical Safety Warning</h4>
-                                            <p className="text-lg text-danger/80 font-bold leading-relaxed">Always consult your MD if symptoms persist. Do not mix with alcoholic formulations or heavy CNS depressants.</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid md:grid-cols-3 gap-8">
-                                        {(medicine.sideEffects ? (typeof medicine.sideEffects === 'string' ? medicine.sideEffects.split(',') : medicine.sideEffects) : []).map((effect, i) => (
-                                            <div key={i} className="p-8 bg-white rounded-[2.5rem] border border-neutral-100 shadow-sm hover:shadow-md transition-all text-center space-y-4 group">
-                                                <div className="w-12 h-12 bg-neutral-50 rounded-2xl flex items-center justify-center text-neutral-400 mx-auto group-hover:bg-brand-50 group-hover:text-brand-primary transition-all">
-                                                    <Activity size={24} />
-                                                </div>
-                                                <p className="font-black text-neutral-900 uppercase tracking-widest text-xs">{effect.trim()}</p>
-                                                <p className="text-[10px] text-neutral-400 font-bold">Rare occurrence (‹ 1.2%)</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </div>
-
-                {/* ♻️ SIMILAR CLINICAL ALTERNATIVES (SUBSTITUTES) */}
-                {substitutes.length > 0 && (
-                    <div className="mt-32">
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                            <div className="space-y-4">
-                                <Badge className="bg-brand-primary/10 text-brand-primary border-none text-[10px] font-black tracking-widest uppercase px-4 py-1.5 rounded-full">
-                                   {medicine.genericName ? 'Generic Cost Optimization' : 'Clinical Recommendations'}
+                {/* Right: Intelligence */}
+                <div className="space-y-10">
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-4">
+                            <Badge className="bg-brand-primary/10 text-brand-primary border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                                {medicine.category}
+                            </Badge>
+                            {medicine.requiresPrescription && (
+                                <Badge className="bg-amber-50 text-amber-600 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-2">
+                                    <ShieldAlert size={14} /> Prescription Req.
                                 </Badge>
-                                <h2 className="text-4xl font-display font-black text-neutral-900 tracking-tight">
-                                    {medicine.genericName ? 'Clinical Substitutes.' : 'Similar Formulations.'}
-                                </h2>
-                                <p className="text-neutral-500 font-medium">
-                                    {medicine.genericName 
-                                        ? 'Alternative molecules with identical generic composition for efficiency.' 
-                                        : 'Clinically related products categorized within the same therapeutic block.'}
-                                </p>
-                            </div>
-                            <Link to="/shop" className="text-sm font-black text-brand-primary flex items-center gap-2 group">
-                                EXPLORE REGISTRY <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                            )}
                         </div>
-
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {substitutes.map((sub) => (
-                                <Link 
-                                    to={`/medicine/${sub._id}`} 
-                                    key={sub._id}
-                                    className="bg-white p-6 rounded-[2.5rem] border border-neutral-100 hover:border-brand-primary hover:shadow-xl transition-all group"
-                                >
-                                    <div className="aspect-square rounded-2xl bg-neutral-50 p-6 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform">
-                                        <img src={typeof sub.images?.[0] === 'string' ? sub.images[0] : (sub.images?.[0]?.url || '')} className="w-full h-full object-contain" alt="" />
-                                    </div>
-                                    <h4 className="text-sm font-black text-neutral-900 truncate tracking-tight">{sub.name}</h4>
-                                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mt-1 mb-4">{sub.brand}</p>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-lg font-black text-neutral-900">₹{sub.sellingPrice || sub.price}</span>
-                                        <div className="w-8 h-8 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-300 group-hover:bg-brand-primary group-hover:text-white transition-all">
-                                            <Plus size={16} />
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
+                        <h1 className="text-4xl md:text-5xl font-black text-neutral-950 tracking-tighter leading-tight uppercase">
+                            {medicine.name}
+                        </h1>
+                        <p className="text-lg text-neutral-500 font-bold uppercase tracking-tight">{medicine.brand} · {medicine.dosageForm}</p>
+                        
+                        <div className="flex items-center gap-6 pt-2">
+                            <div className="flex items-center gap-2">
+                                <div className="flex text-amber-500">
+                                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={18} fill={s <= 4.8 ? "currentColor" : "none"} />)}
+                                </div>
+                                <span className="font-black text-neutral-900 text-lg">4.8</span>
+                            </div>
+                            <div className="w-px h-6 bg-neutral-100" />
+                            <span className="text-sm font-bold text-neutral-400 uppercase tracking-widest">1,240 Certified Reviews</span>
                         </div>
                     </div>
-                )}
 
-                {/* 💬 CLINICAL FEEDBACK REGISTRY */}
-                <div className="mt-32">
-                    <div className="bg-neutral-900 rounded-[4rem] p-12 lg:p-20 text-white relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-                        
-                        <div className="grid lg:grid-cols-5 gap-20 relative z-10">
-                            <div className="lg:col-span-2 space-y-8">
-                                <div className="space-y-4">
-                                    <h2 className="text-4xl md:text-6xl font-display font-black tracking-tight leading-[0.9]">Patient <br/> <span className="text-brand-primary">Sentiment.</span></h2>
-                                    <p className="text-neutral-400 font-medium leading-relaxed">Authoritative feedback from patients who have successfully completed this clinical protocol.</p>
+                    <div className="p-10 bg-neutral-950 rounded-[3rem] text-white relative overflow-hidden shadow-2xl">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
+                        <div className="relative z-10 space-y-8">
+                            <div className="flex items-baseline gap-4">
+                                <span className="text-[56px] font-black text-white tracking-tighter leading-none">₹{medicine.sellingPrice}</span>
+                                {discount > 0 && <span className="text-2xl text-neutral-600 font-bold line-through">₹{medicine.mrp}</span>}
+                            </div>
+                            
+                            <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl p-1.5">
+                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 rounded-xl hover:bg-white/10 flex items-center justify-center text-neutral-400 transition-all">
+                                        <Minus size={20} />
+                                    </button>
+                                    <span className="w-12 text-center font-black text-xl">{quantity}</span>
+                                    <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 rounded-xl hover:bg-white/10 flex items-center justify-center text-neutral-400 transition-all">
+                                        <Plus size={20} />
+                                    </button>
                                 </div>
-                                
-                                <div className="space-y-6">
-                                    <div className="flex items-center gap-6">
-                                        <span className="text-6xl font-black tracking-tighter">4.8</span>
-                                        <div className="space-y-1">
-                                            <div className="flex text-accent-bright">
-                                                {[1,2,3,4,5].map(s => <Star key={s} size={14} fill="currentColor" strokeWidth={0} />)}
-                                            </div>
-                                            <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Global Aggregate</p>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {[
-                                          { label: 'Effectiveness', pct: 98 },
-                                          { label: 'Packaging', pct: 94 },
-                                          { label: 'Bioavailability', pct: 89 }
-                                        ].map(m => (
-                                          <div key={m.label} className="space-y-1.5">
-                                             <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-neutral-500">
-                                                <span>{m.label}</span>
-                                                <span>{m.pct}%</span>
-                                             </div>
-                                             <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                                <motion.div initial={{ width: 0 }} whileInView={{ width: `${m.pct}%` }} className="h-full bg-brand-primary" />
-                                             </div>
-                                          </div>
-                                        ))}
-                                    </div>
+                                <Button 
+                                    onClick={handleAddToCart}
+                                    size="xl" fullRadius className="flex-1 h-[76px] bg-brand-primary text-white font-black text-[14px] uppercase tracking-[0.2em] shadow-xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                >
+                                    Add to Vault <ShoppingCart size={22} className="ml-4" />
+                                </Button>
+                            </div>
+                            
+                            <div className="pt-4 flex flex-wrap gap-x-8 gap-y-4">
+                                <div className="flex items-center gap-3">
+                                    <Truck size={18} className="text-brand-primary" />
+                                    <span className="text-[11px] font-black uppercase tracking-widest">Same Day Delivery</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <RotateCcw size={18} className="text-brand-primary" />
+                                    <span className="text-[11px] font-black uppercase tracking-widest">Easy Returns</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <ShieldCheck size={18} className="text-brand-primary" />
+                                    <span className="text-[11px] font-black uppercase tracking-widest">Certified Batch</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="lg:col-span-3 space-y-6">
-                                {[
-                                   { user: 'Dr. Sarah J.', text: 'Prescribed this for chronic management. The batch purity is consistent with Tier-1 standards.', date: '2 days ago' },
-                                   { user: 'Vikram Singh', text: 'Significant cost savings compared to the branded alternative without any loss in clinical efficacy.', date: '1 week ago' }
-                                ].map((review, i) => (
-                                   <div key={i} className="p-8 bg-white/5 border border-white/5 rounded-[2.5rem] hover:bg-white/10 transition-all">
-                                      <div className="flex items-center justify-between mb-4">
-                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center font-black text-white">{review.user[0]}</div>
-                                            <div>
-                                               <p className="text-sm font-black tracking-tight">{review.user}</p>
-                                               <p className="text-[10px] text-neutral-500 font-bold uppercase">{review.date}</p>
-                                            </div>
-                                         </div>
-                                         <div className="flex text-brand-primary">
-                                            {[1,2,3,4,5].map(s => <Star key={s} size={12} fill="currentColor" strokeWidth={0} />)}
-                                         </div>
-                                      </div>
-                                      <p className="text-neutral-400 font-medium leading-relaxed italic text-sm">"{review.text}"</p>
-                                   </div>
-                                ))}
-                                <Button className="w-full h-16 bg-white/5 hover:bg-white/10 text-white rounded-[1.5rem] border border-white/10 font-black text-xs uppercase tracking-widest">Access All Registry Entries</Button>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="p-8 bg-neutral-50 rounded-[2.5rem] border border-neutral-100 flex items-center gap-6 group hover:bg-white transition-all">
+                            <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-primary group-hover:scale-110 transition-transform">
+                                <BadgeCheck size={28} />
+                            </div>
+                            <div>
+                                <h4 className="font-black text-neutral-900 uppercase text-xs tracking-tight">Verified Source</h4>
+                                <p className="text-[11px] text-neutral-400 font-medium">100% genuine formulation.</p>
+                            </div>
+                        </div>
+                        <div className="p-8 bg-neutral-50 rounded-[2.5rem] border border-neutral-100 flex items-center gap-6 group hover:bg-white transition-all">
+                            <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-primary group-hover:scale-110 transition-transform">
+                                <Lock size={28} />
+                            </div>
+                            <div>
+                                <h4 className="font-black text-neutral-900 uppercase text-xs tracking-tight">Safe Packaging</h4>
+                                <p className="text-[11px] text-neutral-400 font-medium">Tamper-proof medical grade.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Clinical Tabs */}
+            <div className="container-custom mt-24">
+                <div className="border-b border-neutral-100 flex gap-12 overflow-x-auto no-scrollbar">
+                    {['overview', 'composition', 'side-effects', 'usage'].map(tab => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={cn(
+                                "pb-6 text-[11px] font-black uppercase tracking-[0.3em] transition-all relative whitespace-nowrap",
+                                activeTab === tab ? "text-neutral-950" : "text-neutral-300 hover:text-neutral-500"
+                            )}
+                        >
+                            {tab.replace('-', ' ')}
+                            {activeTab === tab && (
+                                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary rounded-full" />
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="py-16 max-w-4xl">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="space-y-12"
+                        >
+                            {activeTab === 'overview' && (
+                                <div className="grid md:grid-cols-2 gap-16">
+                                    <div className="space-y-6">
+                                        <h4 className="flex items-center gap-3 text-sm font-black text-neutral-900 uppercase tracking-widest">
+                                            <Info size={18} className="text-brand-primary" /> Indications
+                                        </h4>
+                                        <p className="text-[15px] text-neutral-500 leading-relaxed font-medium">
+                                            {medicine.description || "Clinical documentation pending for this specific formulation. Contact our expert pharmacist for detailed guidance."}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-6">
+                                        <h4 className="flex items-center gap-3 text-sm font-black text-neutral-900 uppercase tracking-widest">
+                                            <ShieldCheck size={18} className="text-brand-primary" /> Quick Facts
+                                        </h4>
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between border-b border-neutral-50 pb-3">
+                                                <span className="text-xs font-bold text-neutral-400 uppercase">Drug Class</span>
+                                                <span className="text-xs font-black text-neutral-900 uppercase">{medicine.category}</span>
+                                            </div>
+                                            <div className="flex justify-between border-b border-neutral-50 pb-3">
+                                                <span className="text-xs font-bold text-neutral-400 uppercase">Generic Name</span>
+                                                <span className="text-xs font-black text-neutral-900 uppercase">{medicine.genericName || 'System Ref.'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'composition' && (
+                                <div className="space-y-8">
+                                    <h4 className="text-sm font-black text-neutral-900 uppercase tracking-widest">Chemical Composition</h4>
+                                    <div className="p-10 bg-neutral-50 rounded-[3rem] border border-neutral-100 flex items-center gap-10">
+                                        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-brand-primary shadow-sm">
+                                            <FlaskConical size={40} />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-black text-neutral-900 tracking-tight uppercase">{medicine.genericName}</p>
+                                            <p className="text-sm text-neutral-400 font-bold uppercase tracking-widest">Primary Molecule Node</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'side-effects' && (
+                                <div className="space-y-8">
+                                    <h4 className="text-sm font-black text-neutral-900 uppercase tracking-widest">Reported Side Effects</h4>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        {(Array.isArray(medicine.sideEffects) ? medicine.sideEffects : (typeof medicine.sideEffects === 'string' ? medicine.sideEffects.split(',').filter(Boolean) : [])).map((effect, i) => (
+                                            <div key={i} className="flex items-center gap-4 p-6 bg-rose-50/50 rounded-2xl border border-rose-100">
+                                                <div className="w-2 h-2 rounded-full bg-rose-500" />
+                                                <span className="text-sm font-bold text-rose-900 uppercase tracking-tight">{effect}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'usage' && (
+                                <div className="space-y-8">
+                                    <h4 className="text-sm font-black text-neutral-900 uppercase tracking-widest">Clinical Usage Protocol</h4>
+                                    <div className="p-10 bg-neutral-50 rounded-[3rem] border border-neutral-100 space-y-6">
+                                        <div className="flex items-center gap-4 text-brand-primary">
+                                            <Calendar size={24} />
+                                            <p className="font-black uppercase tracking-widest text-sm">Suggested Frequency</p>
+                                        </div>
+                                        <p className="text-lg text-neutral-700 font-medium leading-relaxed">
+                                            {medicine.indications || "Usage protocol should be strictly followed as per the instructions on your physician's prescription."}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            </div>
+
+            {/* Substitutes Section */}
+            {substitutes.length > 0 && (
+                <div className="container-custom mt-32 space-y-12">
+                    <div className="flex items-end justify-between">
+                        <div className="space-y-4">
+                            <span className="text-brand-primary font-black text-[11px] uppercase tracking-[0.4em]">Alternative Solutions</span>
+                            <h2 className="text-4xl font-black text-neutral-950 tracking-tighter uppercase">Clinical Substitutes.</h2>
+                        </div>
+                        <Button onClick={() => navigate('/shop')} variant="ghost" className="font-black text-xs uppercase tracking-widest">View More <ChevronRight size={16} className="ml-2" /></Button>
+                    </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                        {substitutes.map(sub => (
+                            <motion.div 
+                                key={sub._id}
+                                onClick={() => navigate(`/medicine/${sub._id}`)}
+                                className="group cursor-pointer space-y-6"
+                            >
+                                <div className="aspect-square bg-neutral-50 rounded-[3rem] border border-neutral-100 p-8 flex items-center justify-center group-hover:bg-white group-hover:border-brand-primary/30 group-hover:shadow-2xl transition-all duration-700">
+                                    <img src={sub.images?.[0]?.url || sub.images?.[0]} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform" />
+                                </div>
+                                <div className="px-2 space-y-1">
+                                    <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{sub.brand}</p>
+                                    <h4 className="text-lg font-black text-neutral-900 uppercase tracking-tight truncate">{sub.name}</h4>
+                                    <p className="text-xl font-black text-neutral-400 tracking-tighter">₹{sub.sellingPrice}</p>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

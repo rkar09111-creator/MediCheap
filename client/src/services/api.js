@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { API_URL } from '../constants';
+import { toast } from 'react-hot-toast';
+
+const API_BASE = '/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -20,192 +23,181 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(
   response => response,
   error => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    
+    if (status === 401) {
       localStorage.removeItem('token');
-      // Optional: redirect to login if not on public pages
-      // window.location.href = '/login';
+      // No toast needed for 401 as it usually redirects to login
+    } else if (status === 403) {
+      toast.error("Access Denied: Your security clearance is insufficient.");
+    } else if (status >= 500) {
+      toast.error("System Malfunction: Central node encountered an internal logic error.");
     }
+
     return Promise.reject(error);
   }
 );
 
 export const authService = {
-  login: (credentials) => api.post('/api/auth/login', credentials),
-  register: (data) => api.post('/api/auth/register', data),
-  logout: () => api.post('/api/auth/logout'),
-  getMe: () => api.get('/api/auth/me'),
-  updateProfile: (data) => api.put('/api/auth/update-profile', data),
-  getProfileStats: () => api.get('/api/auth/profile-stats'),
-  updateMe: (data) => api.put('/api/auth/update-profile', data),
-  updatePassword: (data) => api.patch('/api/auth/update-password', data),
-  topUpWallet: (amount) => api.post('/api/auth/top-up-wallet', { amount })
+  login: (credentials) => api.post(`${API_BASE}/auth/login`, credentials),
+  register: (data) => api.post(`${API_BASE}/auth/register`, data),
+  logout: () => api.post(`${API_BASE}/auth/logout`),
+  getMe: () => api.get(`${API_BASE}/auth/me`),
+  getProfileStats: () => api.get(`${API_BASE}/auth/profile-stats`),
+  updateMe: (data) => api.put(`${API_BASE}/auth/update-profile`, data),
+  updatePassword: (data) => api.patch(`${API_BASE}/auth/update-password`, data),
+  topUpWallet: (amount) => api.post(`${API_BASE}/auth/top-up-wallet`, { amount })
 };
 
 export const medicineService = {
-  getAll: (params) => api.get('/api/medicines', { params }),
-  getById: (id) => api.get(`/api/medicines/${id}`),
-  search: (q) => api.get('/api/medicines/search', { params: { q } }),
-  // Admin
-  add: (data) => api.post('/api/medicines', data),
-  update: (id, data) => api.put(`/api/medicines/${id}`, data),
-  delete: (id) => api.delete(`/api/medicines/${id}`),
-  toggleAvailability: (id) => api.patch(`/api/medicines/${id}/toggle-availability`),
-  updateStock: (id, data) => api.patch(`/api/medicines/${id}/update-stock`, data)
+  getAll: (params) => api.get(`${API_BASE}/medicines`, { params }),
+  getById: (id) => api.get(`${API_BASE}/medicines/${id}`),
+  search: (q) => api.get(`${API_BASE}/medicines/search`, { params: { q } }),
+  add: (data) => api.post(`${API_BASE}/medicines`, data),
+  update: (id, data) => api.put(`${API_BASE}/medicines/${id}`, data),
+  delete: (id) => api.delete(`${API_BASE}/medicines/${id}`),
+  toggleAvailability: (id) => api.patch(`${API_BASE}/medicines/${id}/toggle-availability`),
+  updateStock: (id, data) => api.patch(`${API_BASE}/medicines/${id}/update-stock`, data)
 };
 
 export const categoryService = {
-  getAll: (params) => api.get('/api/categories', { params }),
-  getById: (id) => api.get(`/api/categories/${id}`),
-  // Admin
-  add: (data) => api.post('/api/categories', data),
-  create: (data) => api.post('/api/categories', data), // Alias
-  update: (id, data) => api.put(`/api/categories/${id}`, data),
-  delete: (id) => api.delete(`/api/categories/${id}`),
-  toggle: (id) => api.patch(`/api/categories/${id}/toggle`),
-  reorder: (categoryIds) => api.put('/api/categories/reorder', { categoryIds })
+  getAll: (params) => api.get(`${API_BASE}/categories`, { params }),
+  getById: (id) => api.get(`${API_BASE}/categories/${id}`),
+  add: (data) => api.post(`${API_BASE}/categories`, data),
+  update: (id, data) => api.put(`${API_BASE}/categories/${id}`, data),
+  delete: (id) => api.delete(`${API_BASE}/categories/${id}`),
+  toggle: (id) => api.patch(`${API_BASE}/categories/${id}/toggle`),
+  reorder: (categoryIds) => api.put(`${API_BASE}/categories/reorder`, { categoryIds })
 };
 
 export const orderService = {
-  placeOrder: (data) => api.post('/api/orders', data),
-  getMyOrders: (params) => api.get('/api/orders', { params }),
-  getById: (id) => api.get(`/api/orders/${id}`),
-  // Admin
-  getAll: (params) => api.get('/api/orders/all', { params }),
-  updateStatus: (id, data) => api.patch(`/api/orders/${id}/status`, data)
+  placeOrder: (data) => api.post(`${API_BASE}/orders`, data),
+  getMyOrders: (params) => api.get(`${API_BASE}/orders`, { params }),
+  getById: (id) => api.get(`${API_BASE}/orders/${id}`),
+  getAll: (params) => api.get(`${API_BASE}/orders/all`, { params }),
+  updateStatus: (id, data) => api.patch(`${API_BASE}/orders/${id}/status`, data)
 };
 
 export const addressService = {
-  getAll: () => api.get('/api/addresses'),
-  add: (data) => api.post('/api/addresses', data),
-  setDefault: (id) => api.patch(`/api/addresses/${id}/set-default`),
-  geocode: (address) => api.post('/api/addresses/geocode', { address }),
-  reverseGeocode: (lat, lng) => api.post('/api/addresses/reverse-geocode', { lat, lng })
+  getAll: () => api.get(`${API_BASE}/addresses`),
+  add: (data) => api.post(`${API_BASE}/addresses`, data),
+  setDefault: (id) => api.patch(`${API_BASE}/addresses/${id}/set-default`),
+  geocode: (address) => api.post(`${API_BASE}/addresses/geocode`, { address }),
+  reverseGeocode: (lat, lng) => api.post(`${API_BASE}/addresses/reverse-geocode`, { lat, lng })
 };
 
 export const settingService = {
-  getAll: () => api.get('/api/settings'),
-  getSettings: () => api.get('/api/settings'),
-  getHomepage: () => api.get('/api/settings/homepage'),
-  // Admin
-  updateHomepage: (data) => api.put('/api/settings/homepage', data),
-  updateStore: (data) => api.put('/api/settings/store', data),
-  updateDelivery: (data) => api.put('/api/settings/delivery', data),
-  update: (data) => api.put('/api/settings', data)
+  getAll: () => api.get(`${API_BASE}/settings`),
+  getHomepage: () => api.get(`${API_BASE}/settings/homepage`),
+  updateHomepage: (data) => api.put(`${API_BASE}/settings/homepage`, data),
+  updateStore: (data) => api.put(`${API_BASE}/settings/store`, data),
+  updateDelivery: (data) => api.put(`${API_BASE}/settings/delivery`, data),
+  update: (data) => api.put(`${API_BASE}/settings`, data)
 };
 
 export const bannerService = {
-  getAll: () => api.get('/api/banners'),
-  add: (data) => api.post('/api/banners', data),
-  update: (id, data) => api.put(`/api/banners/${id}`, data),
-  delete: (id) => api.delete(`/api/banners/${id}`)
+  getAll: () => api.get(`${API_BASE}/banners`),
+  add: (data) => api.post(`${API_BASE}/banners`, data),
+  update: (id, data) => api.put(`${API_BASE}/banners/${id}`, data),
+  delete: (id) => api.delete(`${API_BASE}/banners/${id}`)
 };
 
 export const adminService = {
-  getStats: () => api.get('/api/reports/stats'),
-  getUsers: () => api.get('/api/users'),
-  getOrders: () => api.get('/api/orders/all'),
-  getPrescriptions: () => api.get('/api/prescriptions/all'),
-  getRiders: () => api.get('/api/rider/available'),
-  updatePrescriptionStatus: (id, status) => api.patch(`/api/prescriptions/${id}/status`, { status }),
-  updateOrderStatus: (id, status) => api.patch(`/api/orders/${id}/status`, { status }),
-  verifyPrescription: (id) => api.patch(`/api/prescriptions/${id}/verify`),
-  assignRider: (orderId, riderId) => api.patch(`/api/orders/${orderId}/assign-rider`, { riderId }),
-  deleteMedicine: (id) => api.delete(`/api/medicines/${id}`),
-  updateMedicine: (id, data) => api.put(`/api/medicines/${id}`, data),
-  addMedicine: (data) => api.post('/api/medicines', data),
-  bulkImport: (data) => api.post('/api/medicines/bulk-import', data),
-  getAuditLogs: (params) => api.get('/api/audit/all', { params }),
-  getCounts: () => api.get('/api/reports/counts')
+  getStats: () => api.get(`${API_BASE}/reports/stats`),
+  getUsers: () => api.get(`${API_BASE}/users`),
+  getOrders: () => api.get(`${API_BASE}/orders/all`),
+  getPrescriptions: () => api.get(`${API_BASE}/prescriptions/all`),
+  getRiders: () => api.get(`${API_BASE}/rider/available`),
+  updatePrescriptionStatus: (id, status) => api.patch(`${API_BASE}/prescriptions/${id}/status`, { status }),
+  updateOrderStatus: (id, status) => api.patch(`${API_BASE}/orders/${id}/status`, { status }),
+  verifyPrescription: (id) => api.patch(`${API_BASE}/prescriptions/${id}/verify`),
+  assignRider: (orderId, riderId) => api.patch(`${API_BASE}/orders/${orderId}/assign-rider`, { riderId }),
+  deleteMedicine: (id) => api.delete(`${API_BASE}/medicines/${id}`),
+  updateMedicine: (id, data) => api.put(`${API_BASE}/medicines/${id}`, data),
+  addMedicine: (data) => api.post(`${API_BASE}/medicines`, data),
+  bulkImport: (data) => api.post(`${API_BASE}/medicines/bulk-import`, data),
+  getAuditLogs: (params) => api.get(`${API_BASE}/audit/all`, { params }),
+  getCounts: () => api.get(`${API_BASE}/reports/counts`)
 };
 
 export const paymentService = {
-  getSettings: () => api.get('/api/payments/settings'),
-  updateUpi: (data) => api.put('/api/payments/settings/upi', data),
-  updateCod: (data) => api.put('/api/payments/settings/cod', data),
-  uploadScreenshot: (orderId, data) => api.post(`/api/payments/screenshot/${orderId}`, data),
-  uploadQr: (data) => api.post('/api/payments/settings/qr', data),
-  getPending: () => api.get('/api/payments/pending'),
-  verify: (orderId, notes) => api.patch(`/api/payments/verify/${orderId}`, { notes }),
-  reject: (orderId, notes) => api.patch(`/api/payments/reject/${orderId}`, { notes })
+  getSettings: () => api.get(`${API_BASE}/payments/settings`),
+  updateUpi: (data) => api.put(`${API_BASE}/payments/settings/upi`, data),
+  updateCod: (data) => api.put(`${API_BASE}/payments/settings/cod`, data),
+  uploadScreenshot: (orderId, data) => api.post(`${API_BASE}/payments/screenshot/${orderId}`, data),
+  uploadQr: (data) => api.post(`${API_BASE}/payments/settings/qr`, data),
+  getPending: () => api.get(`${API_BASE}/payments/pending`),
+  verify: (orderId, notes) => api.patch(`${API_BASE}/payments/verify/${orderId}`, { notes }),
+  reject: (orderId, notes) => api.patch(`${API_BASE}/payments/reject/${orderId}`, { notes })
 };
 
 export const chatService = {
-  getAll: () => api.get('/api/chat/sessions'),
-  getChats: () => api.get('/api/chat/sessions'),
-  getById: (sessionId) => api.get(`/api/chat/sessions/${sessionId}`),
-  getMessages: (sessionId) => api.get(`/api/chat/sessions/${sessionId}/messages`),
-  sendMessage: (sessionId, data) => api.post(`/api/chat/sessions/${sessionId}/messages`, data)
+  getAll: () => api.get(`${API_BASE}/chat/sessions`),
+  getById: (sessionId) => api.get(`${API_BASE}/chat/sessions/${sessionId}`),
+  getMessages: (sessionId) => api.get(`${API_BASE}/chat/sessions/${sessionId}/messages`),
+  sendMessage: (sessionId, data) => api.post(`${API_BASE}/chat/sessions/${sessionId}/messages`, data)
 };
 
 export const prescriptionService = {
-  upload: (data) => api.post('/api/prescriptions/upload', data),
-  getMyPrescriptions: (params) => api.get('/api/prescriptions/mine', { params }),
-  getById: (id) => api.get(`/api/prescriptions/${id}`),
-  delete: (id) => api.delete(`/api/prescriptions/${id}`),
-  reupload: (id, data) => api.post(`/api/prescriptions/${id}/reupload`, data)
+  upload: (data) => api.post(`${API_BASE}/prescriptions/upload`, data),
+  getMyPrescriptions: (params) => api.get(`${API_BASE}/prescriptions/mine`, { params }),
+  getById: (id) => api.get(`${API_BASE}/prescriptions/${id}`),
+  delete: (id) => api.delete(`${API_BASE}/prescriptions/${id}`),
+  reupload: (id, data) => api.post(`${API_BASE}/prescriptions/${id}/reupload`, data)
 };
 
 export const couponService = {
-  validate: (data) => api.post('/api/coupons/validate', data),
-  // Admin
-  getAll: () => api.get('/api/coupons/all'),
-  create: (data) => api.post('/api/coupons', data),
-  update: (id, data) => api.patch(`/api/coupons/${id}`, data),
-  delete: (id) => api.delete(`/api/coupons/${id}`)
+  validate: (data) => api.post(`${API_BASE}/coupons/validate`, data),
+  getAll: () => api.get(`${API_BASE}/coupons/all`),
+  add: (data) => api.post(`${API_BASE}/coupons`, data),
+  update: (id, data) => api.patch(`${API_BASE}/coupons/${id}`, data),
+  delete: (id) => api.delete(`${API_BASE}/coupons/${id}`)
 };
 
 export const reviewService = {
-  submit: (data) => api.post('/api/reviews', data),
-  getForMedicine: (medicineId) => api.get(`/api/reviews/medicine/${medicineId}`),
-  // Admin
-  getAll: (params) => api.get('/api/reviews/all', { params }),
-  updateStatus: (id, data) => api.patch(`/api/reviews/${id}/status`, data),
-  delete: (id) => api.delete(`/api/reviews/${id}`)
+  submit: (data) => api.post(`${API_BASE}/reviews`, data),
+  getForMedicine: (medicineId) => api.get(`${API_BASE}/reviews/medicine/${medicineId}`),
+  getAll: (params) => api.get(`${API_BASE}/reviews/all`, { params }),
+  updateStatus: (id, data) => api.patch(`${API_BASE}/reviews/${id}/status`, data),
+  delete: (id) => api.delete(`${API_BASE}/reviews/${id}`)
 };
 
 export const userService = {
-  getAll: (params) => api.get('/api/users', { params }),
-  getById: (id) => api.get(`/api/users/${id}`),
-  block: (id) => api.patch(`/api/users/${id}/block`),
-  delete: (id) => api.delete(`/api/users/${id}`)
+  getAll: (params) => api.get(`${API_BASE}/users`, { params }),
+  getById: (id) => api.get(`${API_BASE}/users/${id}`),
+  block: (id) => api.patch(`${API_BASE}/users/${id}/block`),
+  delete: (id) => api.delete(`${API_BASE}/users/${id}`)
 };
 
 export const analyticsService = {
-  trackVisit: (sessionId) => api.post('/api/analytics/visit', { sessionId }),
-  getSummary: () => api.get('/api/analytics/summary'),
-  getHourly: () => api.get('/api/analytics/hourly')
+  trackVisit: (sessionId) => api.post(`${API_BASE}/analytics/visit`, { sessionId }),
+  getSummary: () => api.get(`${API_BASE}/analytics/summary`),
+  getHourly: () => api.get(`${API_BASE}/analytics/hourly`)
 };
 
 export const companyService = {
-  // Companies
-  getAll: (params) => api.get('/api/companies', { params }),
-  getBySlug: (slug) => api.get(`/api/companies/slug/${slug}`),
-  getById: (id) => api.get(`/api/companies/${id}`),
-  add: (data) => api.post('/api/companies', data),
-  update: (id, data) => api.put(`/api/companies/${id}`, data),
-  delete: (id) => api.delete(`/api/companies/${id}`),
-  toggle: (id) => api.patch(`/api/companies/${id}/toggle`),
-  
-  // Categories
-  getCategories: (companyId) => api.get(`/api/companies/${companyId}/categories`),
-  addCategory: (companyId, data) => api.post(`/api/companies/${companyId}/categories`, data),
-  updateCategory: (companyId, catId, data) => api.put(`/api/companies/${companyId}/categories/${catId}`, data),
-  deleteCategory: (companyId, catId) => api.delete(`/api/companies/${companyId}/categories/${catId}`),
-  
-  // Products
-  getProducts: (companyId, params) => api.get(`/api/companies/${companyId}/products`, { params }),
-  getProductById: (productId) => api.get(`/api/companies/products/detail/${productId}`),
-  addProduct: (companyId, data) => api.post(`/api/companies/${companyId}/products`, data),
-  updateProduct: (companyId, productId, data) => api.put(`/api/companies/${companyId}/products/${productId}`, data),
-  deleteProduct: (companyId, productId) => api.delete(`/api/companies/${companyId}/products/${productId}`),
-  toggleProduct: (companyId, productId) => api.patch(`/api/companies/${companyId}/products/${productId}/toggle`),
-  
-  // Search
-  searchProducts: (q) => api.get('/api/companies/search/products', { params: { q } })
+  getAll: (params) => api.get(`${API_BASE}/companies`, { params }),
+  getBySlug: (slug) => api.get(`${API_BASE}/companies/slug/${slug}`),
+  getById: (id) => api.get(`${API_BASE}/companies/${id}`),
+  add: (data) => api.post(`${API_BASE}/companies`, data),
+  update: (id, data) => api.put(`${API_BASE}/companies/${id}`, data),
+  delete: (id) => api.delete(`${API_BASE}/companies/${id}`),
+  toggle: (id) => api.patch(`${API_BASE}/companies/${id}/toggle`),
+  getCategories: (companyId) => api.get(`${API_BASE}/companies/${companyId}/categories`),
+  addCategory: (companyId, data) => api.post(`${API_BASE}/companies/${companyId}/categories`, data),
+  updateCategory: (companyId, catId, data) => api.put(`${API_BASE}/companies/${companyId}/categories/${catId}`, data),
+  deleteCategory: (companyId, catId) => api.delete(`${API_BASE}/companies/${companyId}/categories/${catId}`),
+  getProducts: (companyId, params) => api.get(`${API_BASE}/companies/${companyId}/products`, { params }),
+  getProductById: (productId) => api.get(`${API_BASE}/companies/products/detail/${productId}`),
+  addProduct: (companyId, data) => api.post(`${API_BASE}/companies/${companyId}/products`, data),
+  updateProduct: (companyId, productId, data) => api.put(`${API_BASE}/companies/${companyId}/products/${productId}`, data),
+  deleteProduct: (companyId, productId) => api.delete(`${API_BASE}/companies/${companyId}/products/${productId}`),
+  toggleProduct: (companyId, productId) => api.patch(`${API_BASE}/companies/${companyId}/products/${productId}/toggle`),
+  searchProducts: (q) => api.get(`${API_BASE}/companies/search/products`, { params: { q } })
 };
 
 export const searchService = {
-  global: (q) => api.get('/api/search/global', { params: { q } })
+  global: (q) => api.get(`${API_BASE}/search/global`, { params: { q } })
 };
 
 export default api;

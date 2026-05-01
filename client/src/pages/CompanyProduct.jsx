@@ -68,7 +68,7 @@ const CompanyProduct = () => {
       {/* Header Info */}
       <div className="container mx-auto px-6 py-8">
          <div className="flex items-center gap-3 text-[10px] font-black text-neutral-400 uppercase tracking-widest">
-            <span className="text-neutral-900">Institutional Registry</span>
+            <span className="text-neutral-900">Medical Registry</span>
             <ChevronRight size={10} />
             <span className="text-neutral-900">{product.company?.name}</span>
             <ChevronRight size={10} />
@@ -228,7 +228,7 @@ const CompanyProduct = () => {
                <div className="text-center space-y-2">
                   <div className="w-12 h-12 bg-neutral-50 rounded-2xl flex items-center justify-center mx-auto text-neutral-400"><ShieldCheck size={24} /></div>
                   <p className="text-[9px] font-black text-neutral-900 uppercase tracking-widest">Brand Sealed</p>
-                  <p className="text-[8px] font-bold text-neutral-400 uppercase leading-none">Institutional</p>
+                  <p className="text-[8px] font-bold text-neutral-400 uppercase leading-none">Medical SKU</p>
                </div>
                <div className="text-center space-y-2">
                   <div className="w-12 h-12 bg-neutral-50 rounded-2xl flex items-center justify-center mx-auto text-neutral-400"><Clock size={24} /></div>

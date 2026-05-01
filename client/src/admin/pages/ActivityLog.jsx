@@ -27,13 +27,15 @@ const ActionBadge = ({ action }) => {
   const styles = {
     create: 'bg-brand-50 text-brand-primary border-brand-100',
     update: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-    delete: 'bg-rose-50 text-rose-600 border-rose-100',
+    delete: 'bg-rose-100 text-rose-600 border-rose-200 animate-pulse font-black shadow-sm', // High Severity
     login: 'bg-green-50 text-green-600 border-green-100',
-    security: 'bg-amber-50 text-amber-600 border-amber-100',
+    security: 'bg-amber-100 text-amber-700 border-amber-200 font-black', // Security Concern
   };
   
   return (
     <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 w-fit ${styles[action.toLowerCase()] || styles.update}`}>
+      {action === 'delete' && <Trash2 size={10} />}
+      {action === 'security' && <ShieldAlert size={10} />}
       {action}
     </span>
   );

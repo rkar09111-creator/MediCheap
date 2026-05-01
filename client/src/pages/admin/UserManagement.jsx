@@ -15,7 +15,8 @@ import {
     Clock,
     Plus,
     Activity,
-    TrendingUp
+    TrendingUp,
+    Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';

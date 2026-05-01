@@ -9,7 +9,8 @@ import {
     TrendingUp, 
     ArrowUpRight, 
     ArrowDownRight,
-    Loader2
+    Loader2,
+    Activity
 } from 'lucide-react';
 import { 
     LineChart, 

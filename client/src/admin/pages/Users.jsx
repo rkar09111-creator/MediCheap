@@ -102,7 +102,7 @@ const Users = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-primary-600 text-xs">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                        {user?.name?.split(' ').map(n => n?.[0] || '').join('') || 'U'}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-admin-text-primary">{user.name}</span>

@@ -45,9 +45,15 @@ const STEPS = [
 
 const Checkout = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = useAuthStore();
-    const { items, clearCart, hasRxItems, calculateSubtotal, calculateTotal, coupon, discount, deliveryFee, prescriptionId, prescriptionFile } = useCartStore();
+    const { items, clearCart, hasRxItems, calculateSubtotal, calculateTotal, coupon, discount, deliveryFee } = useCartStore();
     
+    // Check for prescription-only state passed from UploadPrescription
+    const prescriptionData = location.state || {};
+    const isPrescriptionOnly = prescriptionData.isPrescriptionOnly || false;
+    const pId = prescriptionData.prescriptionId || null;
+
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('cod');
@@ -55,7 +61,7 @@ const Checkout = () => {
     const [timeLeft, setTimeLeft] = useState(600); 
 
     useEffect(() => {
-        if (items.length === 0) {
+        if (items.length === 0 && !isPrescriptionOnly) {
             navigate('/shop');
             return;
         }
@@ -63,20 +69,14 @@ const Checkout = () => {
             setTimeLeft(prev => prev > 0 ? prev - 1 : 0);
         }, 1000);
         return () => clearInterval(timer);
-    }, [items, navigate]);
+    }, [items, navigate, isPrescriptionOnly]);
 
-    const subtotal = calculateSubtotal();
-    const finalTotal = calculateTotal();
+    const subtotal = isPrescriptionOnly ? 0 : calculateSubtotal();
+    const finalTotal = isPrescriptionOnly ? 0 : calculateTotal();
 
     const handlePlaceOrder = async () => {
         if (!selectedAddress) {
             toast.error('Please select a delivery address.');
-            return;
-        }
-
-        if (hasRxItems() && !prescriptionId) {
-            toast.error('Prescription required for these medicines.');
-            setStep(2);
             return;
         }
 
@@ -104,16 +104,20 @@ const Checkout = () => {
                 paymentMethod: paymentMethod,
                 pricing: {
                     subtotal,
-                    deliveryFee,
-                    discount,
+                    deliveryFee: isPrescriptionOnly ? 0 : deliveryFee,
+                    discount: isPrescriptionOnly ? 0 : discount,
                     total: finalTotal
                 },
+                prescription: pId ? {
+                    imageUrl: prescriptionData.prescriptionImage,
+                    status: 'pending'
+                } : undefined,
                 couponCode: coupon?.code,
-                notes: '' 
+                notes: isPrescriptionOnly ? 'Prescription-only order. Pharmacist needs to add medicines.' : '' 
             };
             
             const response = await orderService.placeOrder(orderData);
-            const orderId = response.data.order?._id || response.data._id;
+            const orderId = response.data.data.order?._id || response.data.data._id;
 
             toast.success('Order placed successfully!');
             clearCart();
@@ -242,23 +246,43 @@ const Checkout = () => {
                                         </div>
 
                                         <div className="grid gap-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-hide">
-                                            {items.map(item => (
-                                                <div key={item._id} className="bg-neutral-50 p-6 rounded-[2rem] border border-neutral-100 flex items-center justify-between group transition-all">
-                                                    <div className="flex items-center gap-6">
-                                                        <div className="w-16 h-16 bg-white rounded-xl p-2 border border-neutral-100 shadow-sm relative shrink-0">
-                                                            <img src={item.images?.[0]} className="w-full h-full object-contain" alt="" />
-                                                            <div className="absolute -top-2 -right-2 w-7 h-7 bg-neutral-900 text-white text-[10px] font-black flex items-center justify-center rounded-lg">
-                                                                {item.quantity}
-                                                            </div>
+                                            {isPrescriptionOnly ? (
+                                                <div className="bg-neutral-50 p-8 rounded-[2.5rem] border border-neutral-100 space-y-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600">
+                                                            <FileCheck size={24} />
                                                         </div>
-                                                        <div className="min-w-0">
-                                                            <h4 className="text-base font-black text-neutral-900 truncate uppercase tracking-tight">{item.name}</h4>
-                                                            <p className="text-[10px] text-brand-500 font-black uppercase tracking-widest mt-1">Ready for Delivery</p>
+                                                        <div>
+                                                            <h4 className="text-xl font-black text-neutral-900 uppercase tracking-tight">Prescription Order</h4>
+                                                            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">Pending Clinical Review</p>
                                                         </div>
                                                     </div>
-                                                    <p className="text-xl font-black text-neutral-900 tracking-tighter ml-4">₹{item.price * item.quantity}</p>
+                                                    <div className="aspect-[16/9] rounded-[2rem] overflow-hidden border border-neutral-200 bg-white shadow-inner">
+                                                        <img src={prescriptionData.prescriptionImage} className="w-full h-full object-contain" alt="Prescription" />
+                                                    </div>
+                                                    <p className="text-[10px] text-neutral-500 font-bold leading-relaxed uppercase tracking-wider text-center">
+                                                        Our pharmacist will review this document and add the required medicines to your order.
+                                                    </p>
                                                 </div>
-                                            ))}
+                                            ) : (
+                                                items.map(item => (
+                                                    <div key={item._id} className="bg-neutral-50 p-6 rounded-[2rem] border border-neutral-100 flex items-center justify-between group transition-all">
+                                                        <div className="flex items-center gap-6">
+                                                            <div className="w-16 h-16 bg-white rounded-xl p-2 border border-neutral-100 shadow-sm relative shrink-0">
+                                                                <img src={item.images?.[0]} className="w-full h-full object-contain" alt="" />
+                                                                <div className="absolute -top-2 -right-2 w-7 h-7 bg-neutral-900 text-white text-[10px] font-black flex items-center justify-center rounded-lg">
+                                                                    {item.quantity}
+                                                                </div>
+                                                            </div>
+                                                            <div className="min-w-0">
+                                                                <h4 className="text-base font-black text-neutral-900 truncate uppercase tracking-tight">{item.name}</h4>
+                                                                <p className="text-[10px] text-brand-500 font-black uppercase tracking-widest mt-1">Ready for Delivery</p>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-xl font-black text-neutral-900 tracking-tighter ml-4">₹{item.price * item.quantity}</p>
+                                                    </div>
+                                                ))
+                                            )}
                                         </div>
 
                                         <div className="pt-8 border-t border-neutral-100 grid sm:grid-cols-2 gap-8">
@@ -402,15 +426,29 @@ const Checkout = () => {
                             <h4 className="text-2xl font-black text-white tracking-tight">Order Summary</h4>
 
                             <div className="space-y-6 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
-                                {items.map(item => (
-                                    <div key={item._id} className="flex justify-between items-start gap-6">
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-[11px] font-black text-white uppercase tracking-tight truncate">{item.name}</p>
-                                            <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Qty: {item.quantity}</p>
+                                {isPrescriptionOnly ? (
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                                                <FileText size={18} />
+                                            </div>
+                                            <p className="text-[11px] font-black uppercase tracking-tight">Prescription Order</p>
                                         </div>
-                                        <p className="text-lg font-black text-white tracking-tighter">₹{item.price * item.quantity}</p>
+                                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest leading-relaxed">
+                                            Medicines will be added by the clinical pharmacist after verification.
+                                        </p>
                                     </div>
-                                ))}
+                                ) : (
+                                    items.map(item => (
+                                        <div key={item._id} className="flex justify-between items-start gap-6">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[11px] font-black text-white uppercase tracking-tight truncate">{item.name}</p>
+                                                <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Qty: {item.quantity}</p>
+                                            </div>
+                                            <p className="text-lg font-black text-white tracking-tighter">₹{item.price * item.quantity}</p>
+                                        </div>
+                                    ))
+                                )}
                             </div>
 
                             <div className="h-px bg-white/10" />
@@ -430,8 +468,12 @@ const Checkout = () => {
                                 </div>
                                 <div className="flex justify-between items-end pt-4">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Grand Total</p>
-                                        <h3 className="text-4xl font-black text-white tracking-tighter">₹{finalTotal}</h3>
+                                        <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">
+                                            {isPrescriptionOnly ? 'Initial Total' : 'Grand Total'}
+                                        </p>
+                                        <h3 className="text-4xl font-black text-white tracking-tighter">
+                                            {isPrescriptionOnly ? 'TBD' : `₹${finalTotal}`}
+                                        </h3>
                                     </div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-ping" />

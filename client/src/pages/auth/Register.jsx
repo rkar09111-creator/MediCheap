@@ -44,17 +44,33 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await register(formData);
+    
+    // Clinical Validation Layer
+    if (formData.name.trim().length < 3) {
+      return toast.error('Name must be at least 3 characters for clinical identification.');
+    }
+    
+    const phoneRegex = /^[0-9]{10}$/;
+    const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
+    if (!phoneRegex.test(cleanPhone)) {
+      return toast.error('Please enter a valid 10-digit mobile number.');
+    }
+
+    if (formData.password.length < 8) {
+      return toast.error('Security Protocol: Password must be at least 8 characters.');
+    }
+
+    const result = await register({ ...formData, phone: cleanPhone });
     if (result.success) {
-      toast.success('Account created successfully!');
+      toast.success('Clinical Access Granted: Account created successfully!');
       navigate('/');
     } else {
       toast.error(result.message || 'Registration failed');
     }
   };
+
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center font-body">

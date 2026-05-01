@@ -38,7 +38,7 @@
     --sidebar-text-hover: #C4CDD6;
     --sidebar-text-active:#FFFFFF;
     --sidebar-icon:       #5A6878;
-    --sidebar-icon-active:#024F3A;
+    --sidebar-icon-active:#00C853;
 
     /* Page Canvas */
     --admin-bg:         #F4F6F8;
@@ -54,8 +54,8 @@
     --admin-text-inverse:   #FFFFFF;
 
     /* Brand */
-    --brand-green:     #024F3A;
-    --brand-green-lt:  #059669;
+    --brand-green:     #00C853;
+    --brand-green-lt:  #00F57A;
     --brand-green-50:  #F0FDF9;
     --brand-green-100: #DCFCEE;
     --brand-green-200: #BBF7E2;
@@ -65,12 +65,12 @@
     --status-confirmed:  #3B82F6;
     --status-packed:     #8B5CF6;
     --status-delivery:   #F97316;
-    --status-delivered:  #024F3A;
+    --status-delivered:  #00C853;
     --status-cancelled:  #EF4444;
     --status-rx-pending: #EC4899;
 
     /* Semantic */
-    --success:  #024F3A;
+    --success:  #00C853;
     --warning:  #D97706;
     --danger:   #DC2626;
     --info:     #2563EB;

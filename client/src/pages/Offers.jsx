@@ -5,43 +5,26 @@ import {
     ChevronRight, ArrowRight, Pill, Check, Copy,
     Star, Crown, Heart, Flame, Ticket, LayoutGrid,
     ShoppingCart, Info, Award, ShoppingBag, Plus,
-    CircleCheck as CheckCircle, CircleX as XCircle
+    CircleCheck as CheckCircle, CircleX as XCircle,
+    Sparkles, Gem, BadgeCheck, Coffee,
+    Smartphone, Headphones, Truck, ArrowUpRight
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { Button, Badge, Skeleton, cn } from '../components/ui';
-import { medicineService, settingService } from '../services/api';
-import { fadeUp, fadeScale, springPop, stagger, slideUp } from '../utils/animations';
+import { medicineService } from '../services/api';
+import { fadeUp, fadeScale, stagger } from '../utils/animations';
 
-// --- Counter Hook for Stats ---
-const useCountUp = (end, duration = 1500) => {
-    const [count, setCount] = useState(0);
-    useEffect(() => {
-        let start = 0;
-        const increment = end / (duration / 16);
-        const timer = setInterval(() => {
-            start += increment;
-            if (start >= end) {
-                setCount(end);
-                clearInterval(timer);
-            } else {
-                setCount(Math.floor(start));
-            }
-        }, 16);
-        return () => clearInterval(timer);
-    }, [end, duration]);
-    return count;
-};
-
-// --- Coupon Card Component ---
-const CouponCard = ({ discount, title, minOrder, expiry, code, popular }) => {
+// ─── Coupon Ticket Component ──────────────────────────────────────────────
+const CouponTicket = ({ discount, title, minOrder, expiry, code, popular }) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         setCopied(true);
-        toast.success(`Code ${code} copied!`, {
-            style: { background: '#024F3A', color: '#fff', borderRadius: '12px' }
+        toast.success(`Code ${code} Copied`, {
+            icon: <BadgeCheck className="text-[#16A34A]" />,
+            style: { borderRadius: '14px', background: '#050E17', color: '#fff', fontWeight: 'bold' }
         });
         setTimeout(() => setCopied(false), 2000);
     };
@@ -49,365 +32,319 @@ const CouponCard = ({ discount, title, minOrder, expiry, code, popular }) => {
     return (
         <motion.div
             variants={fadeUp}
-            whileHover={{ y: -8 }}
-            className="perforated-edge bg-white rounded-3xl overflow-hidden shadow-premium group relative"
+            whileHover={{ y: -6 }}
+            className="relative bg-white rounded-[22px] shadow-[0_1px_4px_rgba(5,14,23,0.06)] border border-[#E4ECF2] overflow-hidden group"
         >
-            <div className="p-8 lg:p-10">
-                <div className="flex justify-between items-start mb-6">
-                    <div className={cn(
-                        "font-display font-black text-4xl",
-                        discount.includes('%') ? "text-brand-600" : "text-amber-600"
-                    )}>
-                        {discount}
+            {/* Perforation line */}
+            <div className="absolute top-[60%] left-0 right-0 h-[1px] border-t-2 border-dashed border-[#F4F8FA] z-10" />
+            <div className="absolute top-[60%] -left-[10px] w-5 h-5 bg-[#F8FAFB] rounded-full -translate-y-1/2 border border-[#E4ECF2] z-20" />
+            <div className="absolute top-[60%] -right-[10px] w-5 h-5 bg-[#F8FAFB] rounded-full -translate-y-1/2 border border-[#E4ECF2] z-20" />
+
+            <div className="p-6 pb-12">
+                <div className="flex justify-between items-start mb-5">
+                    <div className="space-y-0.5">
+                        <span className="font-body font-bold text-[10px] text-[#00C853] uppercase tracking-[0.15em]">Flash Protocol</span>
+                        <h4 className="font-num font-extrabold text-[32px] text-[#050E17] tracking-tight">{discount}</h4>
                     </div>
                     {popular && (
-                        <div className="bg-brand-50 text-brand-600 text-[9px] font-black px-3 py-1.5 rounded-full tracking-widest uppercase">
-                            Trending
+                        <div className="bg-[#E5FFF2] text-[#00C853] text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-[#85FFC1]">
+                            MOST USED
                         </div>
                     )}
                 </div>
-                <h5 className="font-display font-bold text-xl text-neutral-900 mb-2">{title}</h5>
-                <p className="text-sm text-neutral-400 font-medium">{minOrder}</p>
+                <h5 className="font-display font-bold text-[15px] text-[#0D1B2A] mb-1">{title}</h5>
+                <p className="font-body font-medium text-[11px] text-[#6B849D] uppercase tracking-wide">{minOrder}</p>
             </div>
 
-            <div className="px-8 pb-10">
-                <div className="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 flex justify-between items-center group/code hover:border-brand-500/20 transition-all">
-                    <span className="font-display font-black text-lg text-brand-600 tracking-widest">{code}</span>
-                    <button 
-                        onClick={handleCopy} 
-                        className="w-10 h-10 rounded-xl bg-white border border-neutral-100 flex items-center justify-center text-neutral-400 hover:text-brand-600 hover:border-brand-500/20 transition-all shadow-sm"
-                    >
-                        {copied ? <Check size={18} className="text-brand-600" /> : <Copy size={18} />}
-                    </button>
+            <div className="p-6 pt-12 bg-[#FAFCFD]">
+                <div className="flex items-center gap-2.5">
+                    <div className="flex-1 bg-white border border-[#E4ECF2] rounded-[12px] px-4 py-3 flex items-center justify-between shadow-sm group/code hover:border-[#00C853]/30 transition-all">
+                        <span className="font-num font-extrabold text-[17px] text-[#050E17] tracking-[0.15em]">{code}</span>
+                        <button 
+                            onClick={handleCopy}
+                            className="p-1.5 rounded-md hover:bg-[#F4F8FA] text-[#96ADBF] hover:text-[#00C853] transition-colors"
+                        >
+                            {copied ? <Check size={16} /> : <Copy size={16} />}
+                        </button>
+                    </div>
                 </div>
-                <p className="text-[10px] font-black text-neutral-300 uppercase tracking-widest mt-4 flex items-center gap-2">
-                    <Clock size={10} /> Valid until {expiry}
-                </p>
+                <div className="flex items-center gap-1.5 mt-4 font-body font-bold text-[9px] text-[#96ADBF] uppercase tracking-wider">
+                    <Clock size={11} /> VALID UNTIL {expiry}
+                </div>
             </div>
-
-            {/* Perforation visual handled by CSS class .perforated-edge */}
         </motion.div>
     );
 };
 
 const Offers = () => {
     const navigate = useNavigate();
-    const [activeCategory, setActiveCategory] = useState('All');
-    const [timeLeft, setTimeLeft] = useState({ hrs: '00', min: '00', sec: '00' });
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [offersConfig, setOffersConfig] = useState(null);
+    const [timeLeft, setTimeLeft] = useState({ hrs: '24', min: '00', sec: '00' });
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchDeals = async () => {
             try {
-                const [medRes, settingRes] = await Promise.all([
-                    medicineService.getAll({
-                        sort: '-discountPercentage',
-                        limit: 8
-                    }),
-                    settingService.getAll()
-                ]);
-                setProducts(medRes.data.medicines || []);
-                const config = settingRes.data.settings?.offers_config;
-                if (config) setOffersConfig(config);
-            } catch (error) {
-                console.error("Failed to fetch deals", error);
+                const { data } = await medicineService.getAll({ sort: '-discountPercentage', limit: 4 });
+                setProducts(data.medicines || []);
+            } catch (err) {
+                console.error(err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
+        fetchDeals();
 
         const timer = setInterval(() => {
             const now = new Date();
-            const hrs = String(23 - now.getHours()).padStart(2, '0');
-            const min = String(59 - now.getMinutes()).padStart(2, '0');
-            const sec = String(59 - now.getSeconds()).padStart(2, '0');
-            setTimeLeft({ hrs, min, sec });
+            setTimeLeft({
+                hrs: String(23 - now.getHours()).padStart(2, '0'),
+                min: String(59 - now.getMinutes()).padStart(2, '0'),
+                sec: String(59 - now.getSeconds()).padStart(2, '0')
+            });
         }, 1000);
         return () => clearInterval(timer);
     }, []);
 
-    const categories = ['All', 'Flat 20%', 'Buy 2 Get 1', 'Flash Deals', 'Members Only'];
-
-    const coupons = offersConfig?.coupons || [
-        { discount: "20% OFF", title: "New Clinical Account", minOrder: "Above ₹499", expiry: "31 May", code: "MED20", popular: true },
-        { discount: "₹100 OFF", title: "Chronic Care Pack", minOrder: "Above ₹999", expiry: "2 days", code: "CARE100", popular: false },
-        { discount: "FREE SHIP", title: "Express Logistics", minOrder: "Above ₹299", expiry: "30 May", code: "FREESHIP", popular: true }
-    ];
-
-    const membershipPlans = [
-        { tier: 'CORE', price: '₹0 / year', features: ['Standard Discounts', 'Live Tracking', 'Basic Support'], icon: ShieldCheck, color: 'text-neutral-400' },
-        { tier: 'SILVER', price: '₹499 / year', features: ['Extra 5% OFF', 'Priority Support', 'Early Access'], icon: Award, color: 'text-brand-500', recommended: true },
-        { tier: 'GOLD', price: '₹999 / year', features: ['Extra 10% OFF', 'VIP Care Desk', 'Zero Delivery Fee'], icon: Crown, color: 'text-amber-500' }
+    const coupons = [
+        { discount: "20% OFF", title: "Patient Welcome", minOrder: "Above ₹499", expiry: "31 MAY", code: "MCNEW20", popular: true },
+        { discount: "₹150 OFF", title: "Chronic Care", minOrder: "Above ₹1299", expiry: "2 DAYS", code: "CARE150", popular: false },
+        { discount: "FREE SHIP", title: "Priority Logistics", minOrder: "Above ₹399", expiry: "30 MAY", code: "FASTDEL", popular: true }
     ];
 
     return (
-        <div className="min-h-screen bg-neutral-950 pt-24 overflow-hidden relative">
-            <Toaster position="top-right" />
+        <div className="min-h-screen bg-white">
+            <Toaster position="top-center" />
+            
+            {/* ── HERO SECTION: INSTITUTIONAL HUB ── */}
+            <section className="relative pt-[110px] pb-[100px] px-6 overflow-hidden bg-neutral-950">
+                {/* Advanced Gradient Mesh */}
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-primary/10 rounded-full blur-[160px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[140px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+                
+                <div className="container-custom relative z-10">
+                    <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-20 items-center">
+                        <motion.div 
+                            initial={{ x: -30, opacity: 0 }} 
+                            animate={{ x: 0, opacity: 1 }} 
+                            transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                            className="space-y-10"
+                        >
+                            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+                                <Sparkles size={16} className="text-brand-primary animate-pulse" />
+                                <span className="font-body font-black text-[11px] text-brand-primary uppercase tracking-[0.25em]">Clinical Privileges Active</span>
+                            </div>
+                            
+                            <h1 className="font-display font-black text-[clamp(48px,8vw,96px)] leading-[0.85] text-white tracking-[-0.06em] uppercase">
+                                Exclusive <br />
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-primary to-emerald-400">Benefits.</span>
+                            </h1>
+                            
+                            <p className="font-body font-medium text-[20px] text-neutral-400 max-w-xl leading-[1.6]">
+                                Deploying specialized pricing protocols for our medical community. Access institutional-grade savings on all verified formulations.
+                            </p>
 
-            {/* ── AMBIENT BACKGROUND ── */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-brand-500/10 blur-[150px] rounded-full" />
-                <div className="absolute bottom-[10%] right-[-5%] w-[40%] h-[40%] bg-brand-600/10 blur-[120px] rounded-full" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-            </div>
-
-            <div className="relative z-10">
-                {/* ── HERO SECTION ── */}
-                <section className="pt-20 pb-24 px-6 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-brand-500/10 border border-brand-500/20 mb-10"
-                    >
-                        <div className="w-2 h-2 rounded-full bg-brand-500 animate-ping" />
-                        <span className="text-brand-400 font-display font-black text-[10px] uppercase tracking-[0.3em]">Institutional Liquidation Protocol</span>
-                    </motion.div>
-
-                    <h1 className="font-display font-black text-[clamp(40px,10vw,100px)] text-white tracking-tighter leading-[0.9] mb-10">
-                        STRATEGIC <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-emerald-400 to-brand-500">
-                            YIELD CAPTURE.
-                        </span>
-                    </h1>
-                    
-                    <p className="text-neutral-400 text-lg md:text-xl font-medium mt-5 mb-16 max-w-2xl mx-auto text-balance">
-                        Strategic acquisition opportunities on board-certified medical supplies. High-velocity liquidations active for a limited window.
-                    </p>
-
-                    {/* Category Filter */}
-                    <div className="flex gap-4 justify-center overflow-x-auto pb-4 scrollbar-hide px-6">
-                        {categories.map(cat => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={cn(
-                                    "px-10 py-4 rounded-2xl font-display text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
-                                    activeCategory === cat ? "bg-brand-500 text-white shadow-2xl shadow-brand-500/20" : "bg-white/5 text-neutral-500 hover:bg-white/10 hover:text-white border border-white/5"
-                                )}
-                            >
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
-                </section>
-
-                {/* ── FEATURED FLASH DEAL ── */}
-                <section className="max-w-7xl mx-auto px-6 pb-32">
-                    <motion.div
-                        variants={fadeScale} initial="hidden" whileInView="visible" viewport={{ once: true }}
-                        className="bg-gradient-to-br from-brand-500/20 to-neutral-900 border border-white/10 rounded-[3rem] p-12 lg:p-20 relative overflow-hidden group shadow-2xl"
-                    >
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/20 rounded-full blur-[100px] -mr-[250px] -mt-[250px] group-hover:scale-125 transition-transform duration-1000" />
-                        
-                        <div className="flex flex-col lg:flex-row items-center gap-20 relative z-10">
-                            <div className="w-full lg:w-1/2 relative">
-                                <div className="absolute inset-0 bg-brand-500/30 blur-[80px] rounded-full scale-75" />
-                                <motion.div 
-                                    animate={{ y: [0, -20, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                    className="relative z-10 aspect-square rounded-[3rem] bg-white/5 backdrop-blur-xl border border-white/10 p-16"
-                                >
-                                    <img src={products[0]?.images?.[0]?.url || '/med-placeholder.png'} alt="Featured" className="w-full h-full object-contain" />
-                                </motion.div>
-                                
-                                {/* Discount Badge */}
-                                <div className="absolute top-8 right-8 w-24 h-24 bg-brand-500 rounded-full flex flex-col items-center justify-center shadow-2xl rotate-12 group-hover:rotate-0 transition-transform duration-500">
-                                    <span className="text-xs font-black text-white/60">SAVE</span>
-                                    <span className="text-2xl font-black text-white">{products[0]?.discountPercentage || '25'}%</span>
-                                </div>
+                            <div className="flex flex-wrap gap-4">
+                                {['Flash Supply', 'Global Registry', 'Priority Node'].map((tag) => (
+                                    <div key={tag} className="px-6 py-2.5 rounded-full border border-white/10 bg-white/5 font-body font-bold text-[12px] text-neutral-500 uppercase tracking-widest hover:border-brand-primary/50 hover:text-white transition-all cursor-default">
+                                        {tag}
+                                    </div>
+                                ))}
                             </div>
 
-                            <div className="w-full lg:w-1/2 text-center lg:text-left">
-                                <Badge className="bg-amber-500 text-white border-none mb-6 px-4 py-2 font-black text-[10px] tracking-[0.2em] uppercase">High Priority Acquisition</Badge>
-                                <h2 className="font-display font-black text-5xl lg:text-7xl text-white tracking-tighter leading-[1] mb-8">{products[0]?.name || 'Loading Deal...'}</h2>
-                                
-                                <div className="flex items-center justify-center lg:justify-start gap-8 mb-12">
-                                    <div className="text-left">
-                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1.5">Acquisition Price</p>
-                                        <span className="font-display font-black text-6xl text-brand-400">₹{products[0]?.sellingPrice || '0'}</span>
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-1.5">Standard MRP</p>
-                                        <span className="font-display font-black text-3xl text-neutral-600 line-through">₹{products[0]?.mrp || '0'}</span>
+                            <div className="pt-8 flex flex-wrap gap-6 items-center">
+                                <Button size="xl" fullRadius className="px-12 h-16 text-[16px] shimmer-sweep shadow-2xl shadow-brand-primary/20">
+                                    Initialize All Savings
+                                </Button>
+                                <div className="flex items-center gap-4 px-8 py-4 rounded-[24px] bg-white/5 border border-white/10 backdrop-blur-md">
+                                    <Clock size={20} className="text-amber-400" />
+                                    <div className="flex flex-col">
+                                        <span className="font-body font-black text-[10px] text-neutral-500 uppercase tracking-[0.2em] leading-tight">Cycle Reset</span>
+                                        <span className="font-num font-black text-[22px] text-white tracking-widest">{timeLeft.hrs}:{timeLeft.min}:{timeLeft.sec}</span>
                                     </div>
                                 </div>
-
-                                <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
-                                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 px-8 flex items-center gap-6">
-                                        <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-400"><Clock size={24} /></div>
-                                        <div className="text-left">
-                                            <p className="text-neutral-500 text-[10px] uppercase font-black tracking-widest mb-1">Terminal Closure</p>
-                                            <p className="font-display font-black text-2xl text-white tracking-widest">
-                                                {timeLeft.hrs}:{timeLeft.min}:{timeLeft.sec}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <Button onClick={() => navigate(`/medicine/${products[0]?._id}`)} className="h-20 px-16 bg-white text-neutral-900 hover:bg-brand-500 hover:text-white font-display font-black text-lg rounded-2xl transition-all shadow-2xl active:scale-95">
-                                        Secure Deal
-                                    </Button>
-                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                </section>
+                        </motion.div>
 
-                {/* ── SCROLLING TICKER ── */}
-                <div className="bg-brand-600 py-6 overflow-hidden border-y border-white/10 mb-32">
-                    <div className="flex whitespace-nowrap animate-marquee">
-                        {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="flex items-center gap-12 px-12">
-                                <span className="text-white font-display font-black text-2xl uppercase tracking-tighter flex items-center gap-4">
-                                    <Zap size={24} fill="white" className="animate-pulse" /> LIQUIDATION EVENT ACTIVE
-                                </span>
-                                <span className="text-brand-200 font-display font-bold text-2xl opacity-50">•</span>
-                                <span className="text-white font-display font-black text-2xl uppercase tracking-tighter">NODE-WIDE SAVINGS TRIGGERED</span>
-                                <span className="text-brand-200 font-display font-bold text-2xl opacity-50">•</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* ── COUPON GRID ── */}
-                <section className="max-w-6xl mx-auto px-6 pb-40">
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
-                        <div>
-                            <h2 className="font-display font-black text-4xl text-white mb-4 tracking-tight uppercase">Decryption Codes</h2>
-                            <p className="text-neutral-500 font-medium text-lg">Input these authorization protocols at the settlement terminal.</p>
-                        </div>
-                        <Button variant="ghost" className="text-brand-500 hover:text-brand-400 font-black text-[11px] uppercase tracking-widest p-0">
-                            Protocol Ledger <ArrowRight size={16} className="ml-3" />
-                        </Button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        {coupons.map((c, i) => <CouponCard key={i} {...c} />)}
-                    </div>
-                </section>
-
-                {/* ── HIGH YIELD GRID ── */}
-                <section className="bg-white rounded-t-[5rem] py-32 px-6">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-10 mb-20">
-                            <div className="text-center md:text-left">
-                                <h2 className="font-display font-black text-5xl text-neutral-900 tracking-tight mb-4">High Yield Formulations</h2>
-                                <p className="text-neutral-400 text-lg font-medium">Acquisition nodes with maximum liquidation value.</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <Button variant="outline" className="rounded-2xl h-14 px-8 border-neutral-200 font-black text-[10px] uppercase tracking-widest">Sort: Liquidity</Button>
-                                <Button className="btn-primary h-14 px-10 text-[10px] font-black uppercase tracking-widest">Explore All</Button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                            {loading ? (
-                                [...Array(8)].map((_, i) => (
-                                    <div key={i} className="space-y-6">
-                                        <Skeleton className="aspect-square rounded-[2rem]" />
-                                        <Skeleton className="h-4 w-1/2 rounded-full" />
-                                        <Skeleton className="h-10 w-full rounded-2xl" />
-                                    </div>
-                                ))
-                            ) : products.length > 0 ? (
+                        {/* HERO VISUAL: FLOATING CARDS */}
+                        <div className="hidden lg:grid grid-cols-2 gap-6 relative">
+                            <div className="absolute inset-0 bg-brand-primary/5 blur-[100px] rounded-full" />
+                            {loading ? [...Array(4)].map((_, i) => <Skeleton key={i} className="aspect-square rounded-[32px] bg-white/5" />) :
                                 products.map((p, i) => (
                                     <motion.div
                                         key={p._id}
-                                        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                                        className="group cursor-pointer"
+                                        initial={{ opacity: 0, y: 20 }} 
+                                        animate={{ opacity: 1, y: 0 }} 
+                                        transition={{ delay: 0.2 + (i * 0.1), duration: 0.8 }}
+                                        whileHover={{ y: -10, scale: 1.02 }}
+                                        className="aspect-square bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[32px] p-8 relative group cursor-pointer overflow-hidden shadow-2xl"
                                         onClick={() => navigate(`/medicine/${p._id}`)}
                                     >
-                                        <div className="aspect-square bg-neutral-50 rounded-[2.5rem] p-10 relative overflow-hidden mb-6 border border-neutral-100 shadow-sm transition-all group-hover:shadow-premium group-hover:border-brand-500/10">
-                                            <img src={p.images?.[0]?.url || '/med-placeholder.png'} alt={p.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" />
-                                            <div className="absolute top-6 left-6 bg-red-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow-lg rotate-[-4deg]">
-                                                {p.discountPercentage}% OFF
+                                        <div className="absolute top-0 right-0 w-full h-full bg-linear-to-br from-brand-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <img src={p.images?.[0]?.url || '/med-placeholder.png'} className="w-full h-full object-contain relative z-10" alt="" />
+                                        <div className="absolute top-6 right-6 bg-brand-primary text-neutral-950 text-[10px] font-black px-3 py-1.5 rounded-full z-20 shadow-lg">
+                                            -{p.discountPercentage}%
+                                        </div>
+                                        <div className="absolute bottom-6 left-6 right-6 opacity-0 group-hover:opacity-100 transition-all z-20">
+                                            <div className="bg-white rounded-full py-2.5 px-4 flex items-center justify-between shadow-2xl">
+                                                <span className="font-body font-black text-[11px] text-neutral-950 uppercase truncate">{p.name}</span>
+                                                <ArrowUpRight size={14} className="text-brand-primary" />
                                             </div>
                                         </div>
-                                        <p className="text-brand-600 font-black text-[10px] uppercase tracking-[0.2em] mb-1.5 ml-1">{p.brand}</p>
-                                        <h4 className="font-display font-black text-xl text-neutral-900 px-1 line-clamp-1 group-hover:text-brand-600 transition-colors">{p.name}</h4>
-                                        <div className="flex items-baseline gap-4 mt-3 px-1">
-                                            <span className="font-display font-black text-2xl text-neutral-900">₹{p.sellingPrice}</span>
-                                            <span className="font-display font-bold text-sm text-neutral-400 line-through">₹{p.mrp}</span>
-                                        </div>
-                                        <Button className="w-full mt-6 h-14 bg-neutral-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                                            Quick Acquisition
-                                        </Button>
                                     </motion.div>
                                 ))
-                            ) : (
-                                <div className="col-span-full py-32 text-center text-neutral-300 font-display font-black uppercase tracking-[0.3em]">
-                                    No liquidation nodes currently active.
-                                </div>
-                            )}
+                            }
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                {/* ── MEMBERSHIP PROTOCOL ── */}
-                <section className="bg-neutral-50 py-40 px-6">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="text-center mb-24">
-                            <Badge className="bg-brand-50 text-brand-600 border-none px-4 py-1.5 font-black text-[9px] uppercase tracking-[0.3em] mb-6">Tiered Access</Badge>
-                            <h2 className="font-display font-black text-5xl text-neutral-900 tracking-tight mb-4">Membership Registry</h2>
-                            <p className="text-neutral-500 text-lg font-medium max-w-xl mx-auto">Elevate your clinical acquisition status for maximum yield and zero logistics friction.</p>
+            {/* ── COUPON GRID: TICKET UI ── */}
+            <section className="container-custom px-6 -mt-[60px] relative z-20">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {coupons.map((c, i) => <CouponTicket key={i} {...c} />)}
+                </div>
+            </section>
+
+            {/* ── FLASH REWARDS: PREMIUM BENTO ── */}
+            <section className="container-custom px-6 mt-[120px] mb-[120px]">
+                <div className="bg-neutral-50 rounded-[48px] border border-neutral-200 p-12 lg:p-24 relative overflow-hidden group shadow-sm">
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-brand-primary/10 transition-colors duration-1000" />
+                    
+                    <div className="flex flex-col lg:flex-row items-center gap-20 relative z-10">
+                        <div className="w-full lg:w-1/2 space-y-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-primary/10 border border-brand-primary/20 rounded-full">
+                                <Flame size={14} className="text-brand-primary" />
+                                <span className="text-[11px] font-black text-brand-primary uppercase tracking-[0.2em]">Priority Access</span>
+                            </div>
+                            
+                            <h2 className="font-display font-black text-[56px] lg:text-[72px] text-neutral-950 leading-[0.9] tracking-[-0.05em] uppercase">
+                                Real-Time <br/><span className="text-brand-primary">Supply Deals.</span>
+                            </h2>
+                            
+                            <p className="font-body font-medium text-[18px] text-neutral-500 leading-[1.6] max-w-lg">
+                                Optimized for chronic care requirements. These verified formulations feature our highest subsidy rates this quarter.
+                            </p>
+                            
+                            <div className="flex items-center gap-5 pt-6">
+                                <Button size="xl" fullRadius className="px-12 h-16 shadow-xl">Explore Supply Node</Button>
+                                <Button variant="secondary" size="xl" fullRadius className="w-16 h-16 p-0 flex items-center justify-center border-neutral-200"><LayoutGrid size={24} /></Button>
+                            </div>
                         </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                            {membershipPlans.map((plan, i) => (
-                                <motion.div
-                                    key={plan.tier}
-                                    initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                                    className={cn(
-                                        "rounded-[3rem] p-12 relative overflow-hidden flex flex-col border transition-all duration-500",
-                                        plan.recommended ? "bg-white border-brand-500/20 shadow-premium scale-105 z-10" : "bg-white/50 border-neutral-100 hover:bg-white hover:border-brand-500/10"
-                                    )}
-                                >
-                                    {plan.recommended && (
-                                        <div className="absolute top-6 right-6 px-4 py-1.5 rounded-full bg-brand-600 text-white text-[9px] font-black tracking-widest uppercase">
-                                            Strategic Choice
+
+                        <div className="w-full lg:w-1/2 grid grid-cols-2 gap-6">
+                            {loading ? [...Array(4)].map((_, i) => <Skeleton key={i} className="aspect-square rounded-[32px] bg-white" />) :
+                                products.map((p, i) => (
+                                    <motion.div 
+                                        key={i} 
+                                        whileHover={{ scale: 1.05 }}
+                                        className="bg-white border border-neutral-200 rounded-[32px] p-8 group cursor-pointer shadow-sm hover:shadow-xl hover:border-brand-primary/30 transition-all"
+                                    >
+                                        <div className="aspect-square mb-6 flex items-center justify-center">
+                                            <img src={p.images?.[0]?.url || '/med-placeholder.png'} className="max-w-full max-h-full object-contain" alt="" />
                                         </div>
-                                    )}
-
-                                    <div className={cn("w-16 h-16 rounded-2xl bg-neutral-50 flex items-center justify-center mb-10 shadow-inner", plan.color)}>
-                                        <plan.icon size={32} strokeWidth={1.5} />
-                                    </div>
-
-                                    <h3 className="font-display font-black text-3xl text-neutral-900 mb-2">{plan.tier}</h3>
-                                    <p className="font-display font-black text-lg text-neutral-400 mb-10">{plan.price}</p>
-
-                                    <div className="space-y-5 mb-12 flex-1">
-                                        {plan.features.map((f, idx) => (
-                                            <div key={idx} className="flex items-center gap-4">
-                                                <CheckCircle size={18} className="text-brand-500" />
-                                                <span className="text-sm font-bold text-neutral-600">{f}</span>
+                                        <div className="space-y-2">
+                                            <p className="font-body font-black text-[14px] text-neutral-900 truncate uppercase tracking-tight">{p.name}</p>
+                                            <div className="flex items-center justify-between">
+                                                <p className="font-num font-black text-[20px] text-neutral-950">₹{p.discountPrice}</p>
+                                                <Badge variant="success" className="h-6 px-2.5 bg-brand-primary/10 text-brand-primary border-none text-[10px] font-black">-{p.discountPercentage}%</Badge>
                                             </div>
-                                        ))}
-                                    </div>
-
-                                    <Button className={cn(
-                                        "w-full h-16 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl transition-all active:scale-95",
-                                        plan.recommended ? "bg-brand-600 text-white hover:bg-brand-700 shadow-brand-500/20" : "bg-neutral-100 text-neutral-900 hover:bg-neutral-900 hover:text-white"
-                                    )}>
-                                        {plan.tier === 'CORE' ? 'Current Plan' : 'Select Protocol'}
-                                    </Button>
-                                </motion.div>
-                            ))}
+                                        </div>
+                                    </motion.div>
+                                ))
+                            }
                         </div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                .scrollbar-hide::-webkit-scrollbar { display: none; }
-                @keyframes marquee {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
-                }
-                .animate-marquee {
-                    display: flex;
-                    width: fit-content;
-                    animation: marquee 40s linear infinite;
-                }
-            `}} />
+            {/* ── MEMBERSHIP TIERS: FLOATING PANEL ── */}
+            <section className="bg-neutral-950 py-[140px] px-6">
+                <div className="container-custom">
+                    <div className="text-center max-w-3xl mx-auto space-y-6 mb-[100px]">
+                        <h2 className="font-display font-black text-[56px] text-white tracking-[-0.04em] uppercase">Membership Protocol</h2>
+                        <p className="font-body font-medium text-[18px] text-neutral-500 leading-relaxed">
+                            Upgrade your health registry status to unlock automated refills, priority logistics, and clinical desk support.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-stretch">
+                        {[
+                            { name: 'Standard', price: '₹0', icon: Coffee, benefits: ['Standard Rewards', 'Email Support', 'Monthly Logs'], color: 'neutral' },
+                            { name: 'Priority', price: '₹499', icon: Gem, benefits: ['Extra 5% Rewards', 'Priority Dispatch', 'Expert Health Desk', 'Zero Node Fee'], color: 'green', recommended: true },
+                            { name: 'Elite', price: '₹1299', icon: Crown, benefits: ['Extra 10% Rewards', 'Unlimited Priority Log', 'VIP Health Manager', 'Home Sample Collection'], color: 'gold' }
+                        ].map((tier, i) => (
+                            <motion.div
+                                key={tier.name}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1, duration: 0.8 }}
+                                viewport={{ once: true }}
+                                className={cn(
+                                    "rounded-[40px] p-12 border flex flex-col relative transition-all duration-500",
+                                    tier.recommended 
+                                        ? "bg-white border-brand-primary shadow-[0_40px_80px_rgba(0,200,83,0.15)] scale-[1.05] z-10" 
+                                        : "bg-white/5 border-white/10 hover:bg-white/10"
+                                )}
+                            >
+                                {tier.recommended && (
+                                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-brand-primary text-neutral-950 font-body font-black text-[10px] px-6 py-2 rounded-full uppercase tracking-[0.25em] shadow-xl">Most Verified</div>
+                                )}
+                                
+                                <div className={cn(
+                                    "w-[64px] h-[64px] rounded-[20px] flex items-center justify-center mb-10 shadow-lg",
+                                    tier.color === 'green' ? "bg-brand-primary/10 text-brand-primary" : tier.color === 'gold' ? "bg-amber-500/10 text-amber-500" : "bg-white/10 text-white"
+                                )}>
+                                    <tier.icon size={32} />
+                                </div>
+
+                                <h3 className={cn("font-display font-black text-[28px] mb-2 uppercase tracking-tight", tier.recommended ? "text-neutral-950" : "text-white")}>{tier.name}</h3>
+                                <div className="flex items-baseline gap-2 mb-10">
+                                    <span className={cn("font-num font-black text-[42px]", tier.recommended ? "text-neutral-950" : "text-white")}>{tier.price}</span>
+                                    <span className="font-body font-bold text-[11px] text-neutral-500 uppercase tracking-widest">/ Cycle</span>
+                                </div>
+                                
+                                <div className="space-y-5 mb-12 flex-1">
+                                    {tier.benefits.map((b) => (
+                                        <div key={b} className="flex items-center gap-4">
+                                            <div className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0", tier.recommended ? "bg-brand-primary/10 text-brand-primary" : "bg-white/10 text-brand-primary")}>
+                                                <Check size={14} strokeWidth={4} />
+                                            </div>
+                                            <span className={cn("font-body font-bold text-[14px]", tier.recommended ? "text-neutral-700" : "text-neutral-400")}>{b}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <Button size="xl" fullRadius className={cn(
+                                    "w-full h-16 font-display font-black text-[16px] uppercase tracking-widest",
+                                    !tier.recommended && "bg-white/10 hover:bg-white/20 border-white/10 text-white"
+                                )}>
+                                    {tier.recommended ? 'Authorize Priority' : 'Start Protocol'}
+                                </Button>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── TRUST NODES ── */}
+            <section className="bg-white py-[120px] px-6">
+                <div className="container-custom grid md:grid-cols-3 gap-16">
+                    {[
+                        { title: 'Global Logistics', desc: 'Orders move through our cold-chain supply nodes within minutes of verification.', icon: Truck },
+                        { title: 'AES-256 Secure', desc: 'Your health registry and Rx data are encrypted using military-grade protocols.', icon: ShieldCheck },
+                        { title: 'Clinical Desk', desc: '24/7 direct uplink to our licensed pharmacist network for dosage guidance.', icon: Headphones }
+                    ].map((item) => (
+                        <div key={item.title} className="space-y-6 text-center md:text-left group">
+                            <div className="w-[64px] h-[64px] rounded-[22px] bg-neutral-50 border border-neutral-100 flex items-center justify-center text-brand-primary shadow-sm group-hover:bg-brand-primary group-hover:text-white transition-all duration-500">
+                                <item.icon size={28} />
+                            </div>
+                            <h4 className="font-display font-black text-[20px] text-neutral-950 uppercase tracking-tight">{item.title}</h4>
+                            <p className="font-body font-medium text-[16px] text-neutral-500 leading-relaxed">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
     );
 };

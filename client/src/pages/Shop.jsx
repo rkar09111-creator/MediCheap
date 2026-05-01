@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
     Search, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight,
@@ -207,15 +208,21 @@ const ProductCard = ({ product, viewMode }) => {
             <div className="product-card-img-area">
                 <img src={imgUrl} alt={product.name} />
                 
-                <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
+                <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">
                     {discount > 0 && (
-                        <div className="bg-[var(--red-600)] text-white font-body font-extrabold text-[10px] px-2 py-[3px] rounded-[var(--r-xs)]">- {discount}% OFF</div>
+                        <div className="bg-brand-primary text-white font-body font-black text-[9px] uppercase px-2 py-[3.5px] rounded-lg shadow-lg shadow-brand-primary/20 tracking-widest">- {discount}% OFF</div>
                     )}
-                    {product.regulatoryCategory === 'POM' ? (
-                        <div className="bg-[rgba(220,38,38,0.1)] border border-[rgba(220,38,38,0.22)] text-[#DC2626] font-body font-bold text-[9px] uppercase px-2 py-[2px] rounded-[5px]">Rx</div>
-                    ) : (
-                        <div className="bg-[rgba(37,99,235,0.1)] border border-[rgba(37,99,235,0.22)] text-[#2563EB] font-body font-bold text-[9px] uppercase px-2 py-[2px] rounded-[5px]">OTC</div>
-                    )}
+                    <div className="flex gap-1">
+                        {product.regulatoryCategory === 'POM' ? (
+                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 font-body font-black text-[9px] uppercase px-2 py-[2.5px] rounded-md backdrop-blur-md">Rx</div>
+                        ) : (
+                            <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary font-body font-black text-[9px] uppercase px-2 py-[2.5px] rounded-md backdrop-blur-md">OTC</div>
+                        )}
+                        <div className="bg-neutral-900/10 border border-neutral-900/10 text-neutral-900 font-body font-black text-[9px] uppercase px-2 py-[2.5px] rounded-md backdrop-blur-md flex items-center gap-1">
+                            <ShieldCheck size={10} strokeWidth={2.5} />
+                            Verified
+                        </div>
+                    </div>
                 </div>
 
                 <motion.button whileTap={{ scale: 1.35 }} onClick={toggleWishlist} className="product-wishlist-btn">
@@ -230,9 +237,9 @@ const ProductCard = ({ product, viewMode }) => {
 
             <div className="product-card-content">
                 <p className="font-body text-[11px] font-semibold text-[var(--green-700)] uppercase tracking-widest mb-1 truncate">{product.brand || 'MediCheap'}</p>
-                <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-display text-[14px] font-black text-[var(--gray-900)] leading-[1.38] line-clamp-2 min-h-[38px] uppercase tracking-tight">{product.name}</h3>
-                    <BadgeCheck size={14} className="text-brand-500 shrink-0" />
+                <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="font-display text-[15px] font-black text-neutral-900 leading-[1.3] line-clamp-2 min-h-[38px] uppercase tracking-tight group-hover:text-brand-primary transition-colors">{product.name}</h3>
+                    {product.isPremium && <Sparkles size={14} className="text-amber-500 shrink-0 animate-pulse" />}
                 </div>
                 
                 <div className="flex items-center gap-[6px] mb-2">
@@ -328,6 +335,10 @@ export default function Shop() {
 
     return (
         <div className="shop-page">
+            <Helmet>
+                <title>{category !== 'All' ? `${category} | Clinical Pharma Registry` : 'Clinical Pharma Registry | MediCheap'}</title>
+                <meta name="description" content={`Explore our clinical pharma registry for ${category !== 'All' ? category : 'genuine medicines'}. Order online for same-day delivery.`} />
+            </Helmet>
             
             {/* 1. SHOP BANNER */}
             <section className="shop-banner">

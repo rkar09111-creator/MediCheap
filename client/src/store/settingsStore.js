@@ -15,7 +15,7 @@ export const useSettingsStore = create((set) => ({
     // Only fetch if not already loaded or if explicitly called
     set({ isLoading: true });
     try {
-      const { data } = await settingService.getSettings();
+      const { data } = await settingService.getAll();
       // API returns { success, data: { settings } }
       const newSettings = data.data?.settings || data.settings;
       if (newSettings) {

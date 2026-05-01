@@ -9,7 +9,8 @@ import {
   Navigation, 
   Search,
   MoreVertical,
-  Loader2
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';

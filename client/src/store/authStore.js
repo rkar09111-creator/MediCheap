@@ -9,6 +9,7 @@ export const useAuthStore = create(
       token: null,
       isAuthenticated: false,
       isLoading: false,
+      isInitialized: false,
       error: null,
 
       login: async (credentials) => {
@@ -51,14 +52,17 @@ export const useAuthStore = create(
 
       getMe: async () => {
         const token = localStorage.getItem('token');
-        if (!token) return;
+        if (!token) {
+          set({ isInitialized: true });
+          return;
+        }
 
         set({ isLoading: true });
         try {
           const { data } = await authService.getMe();
-          set({ user: data.user, isAuthenticated: true, isLoading: false, token });
+          set({ user: data.user, isAuthenticated: true, isLoading: false, isInitialized: true, token });
         } catch (error) {
-          set({ user: null, token: null, isAuthenticated: false, isLoading: false });
+          set({ user: null, token: null, isAuthenticated: false, isLoading: false, isInitialized: true });
           localStorage.removeItem('token');
         }
       },
@@ -74,7 +78,7 @@ export const useAuthStore = create(
 
       updateProfile: async (data) => {
         try {
-          const response = await authService.updateProfile(data);
+          const response = await authService.updateMe(data);
           set({ user: response.data.user });
           return { success: true };
         } catch (error) {

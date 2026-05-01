@@ -64,7 +64,7 @@ const RiderManagement = () => {
         status: r.isOnline ? (r.currentOrder ? 'on-delivery' : 'online') : 'offline',
         currentOrder: r.currentOrder,
         id: `RD-${r._id.slice(-4).toUpperCase()}`,
-        avatar: r.rider.name.split(' ').map(n => n[0]).join('')
+        avatar: r.rider?.name?.split(' ').map(n => n?.[0] || '').join('') || 'R'
       }));
       setRiders(formattedRiders);
     } catch (error) {

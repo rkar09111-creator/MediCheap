@@ -12,7 +12,10 @@ import {
     EyeOff,
     Check,
     AlertCircle,
-    Shield
+    Shield,
+    Activity,
+    ChevronDown,
+    X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';
@@ -259,7 +262,7 @@ const MedicineManagement = () => {
                 )}
             </div>
 
-            {/* Institutional SKU Modal */}
+            {/* Medical SKU Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 lg:p-12">
@@ -292,7 +295,7 @@ const MedicineManagement = () => {
                             <form onSubmit={handleFormSubmit} className="p-12 space-y-12 overflow-y-auto custom-scrollbar">
                                 <div className="grid md:grid-cols-2 gap-10">
                                     <div className="md:col-span-2 space-y-4">
-                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] ml-2">Institutional Name</label>
+                                        <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.3em] ml-2">Medical Name</label>
                                         <input type="text" className="w-full h-16 rounded-[1.5rem] bg-neutral-25 border-none focus:ring-8 focus:ring-brand-600/10 focus:bg-white font-black text-sm transition-all px-8 outline-none shadow-inner" placeholder="e.g. AMX-CLAV 625 DUO" required
                                           value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                                     </div>

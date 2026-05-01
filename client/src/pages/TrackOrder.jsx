@@ -25,14 +25,14 @@ import toast from 'react-hot-toast';
 
 // Custom Leaflet Icons (Enhanced with shadow and border)
 const riderIcon = new L.Icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
+    iconUrl: `data:image/svg+xml;base64,${btoa('<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="30" fill="white" stroke="#00C853" stroke-width="4"/><path d="M20 40L24 28H40L44 40M22 46C22 43.7909 23.7909 42 26 42C28.2091 42 30 43.7909 30 46C30 48.2091 28.2091 50 26 50C23.7909 50 22 48.2091 22 46ZM34 46C34 43.7909 35.7909 42 38 42C40.2091 42 42 43.7909 42 46C42 48.2091 40.2091 50 38 50C35.7909 50 34 48.2091 34 46Z" stroke="#00C853" stroke-width="3" stroke-linecap="round"/><path d="M32 20V28" stroke="#00C853" stroke-width="3" stroke-linecap="round"/></svg>')}`,
     iconSize: [42, 42],
     iconAnchor: [21, 42],
     popupAnchor: [0, -42],
 });
 
 const storeIcon = new L.Icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048329.png',
+    iconUrl: `data:image/svg+xml;base64,${btoa('<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="30" fill="white" stroke="#3B82F6" stroke-width="4"/><path d="M20 44V28L32 20L44 28V44H20Z" fill="#3B82F6" fill-opacity="0.1" stroke="#3B82F6" stroke-width="3"/><rect x="28" y="34" width="8" height="10" stroke="#3B82F6" stroke-width="3"/></svg>')}`,
     iconSize: [42, 42],
     iconAnchor: [21, 42],
     popupAnchor: [0, -42],
@@ -44,6 +44,7 @@ const TrackOrder = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [riderPos, setRiderPos] = useState(null);
+    const [socketConnected, setSocketConnected] = useState(false);
 
     const storeLocation = [20.2961, 85.8245];
 
@@ -65,12 +66,31 @@ const TrackOrder = () => {
         fetchOrder();
 
         const socket = io(API_URL);
-        socket.emit('join:order', id);
+        
+        socket.on('connect', () => {
+            setSocketConnected(true);
+            socket.emit('join:order', id);
+        });
+
+        socket.on('disconnect', () => {
+            setSocketConnected(false);
+        });
+
+        socket.on('connect_error', () => {
+            setSocketConnected(false);
+        });
+
         socket.on('rider:location-update', (data) => {
             setRiderPos([data.lat, data.lng]);
         });
 
-        return () => socket.disconnect();
+        return () => {
+            socket.off('connect');
+            socket.off('disconnect');
+            socket.off('connect_error');
+            socket.off('rider:location-update');
+            socket.disconnect();
+        };
     }, [id, navigate]);
 
     if (loading) return (
@@ -197,9 +217,14 @@ const TrackOrder = () => {
                                     </div>
                                 </div>
                                 <div className="bg-white/90 backdrop-blur-xl p-3 rounded-2xl shadow-xl border border-white hidden md:block">
-                                    <div className="flex gap-2">
-                                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600">Live Tracking: Active</p>
+                                    <div className="flex gap-2 items-center">
+                                        <div className={cn(
+                                            "w-2 h-2 rounded-full",
+                                            socketConnected ? "bg-emerald-500 animate-pulse" : "bg-rose-500"
+                                        )} />
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-neutral-600">
+                                            {socketConnected ? 'Live Tracking: Active' : 'Live Tracking: Offline'}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

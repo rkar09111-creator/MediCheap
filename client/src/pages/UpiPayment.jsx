@@ -130,7 +130,7 @@ const UpiPayment = () => {
               
               <div className="p-10 space-y-10">
                 <div className="space-y-1 text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Institutional Settlement</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Secure Settlement</p>
                   <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Order Clearance.</h2>
                 </div>
 
@@ -177,7 +177,7 @@ const UpiPayment = () => {
                     </button>
                     <div className="flex items-center justify-center gap-4 py-2 opacity-40">
                        <Smartphone size={16} />
-                       <span className="text-[10px] font-black uppercase tracking-[0.2em]">Institutional Hub Pay</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em]">Secure Hub Pay</span>
                     </div>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ const UpiPayment = () => {
                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                  <div className="space-y-2 text-center md:text-left">
                     <h3 className="text-3xl font-black text-slate-900 tracking-tighter">Evidence Hub.</h3>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">Institutional Verification Pipeline</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">Security Verification Pipeline</p>
                  </div>
                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full border border-slate-100">
                     <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
@@ -298,7 +298,7 @@ const UpiPayment = () => {
             <div className="bg-rose-50 rounded-[2.5rem] p-8 border border-rose-100 flex gap-6 items-start">
                <AlertCircle size={24} className="text-rose-500 shrink-0 mt-1" />
                <div className="space-y-1">
-                 <h5 className="font-black text-rose-900 text-xs uppercase tracking-[0.2em]">Institutional Compliance Alert</h5>
+                 <h5 className="font-black text-rose-900 text-xs uppercase tracking-[0.2em]">Compliance Alert</h5>
                  <p className="text-[11px] text-rose-700 font-medium leading-relaxed">
                    Providing falsified settlement artifacts constitutes a clinical registry violation. Our auditors cross-reference transaction IDs with institutional banking telemetry.
                  </p>

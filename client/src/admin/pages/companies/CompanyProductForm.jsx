@@ -248,7 +248,7 @@ const CompanyProductForm = () => {
                     <input type="number" name="mrp" value={formData.mrp} onChange={handleChange} className="admin-input h-14 text-xl font-black" />
                  </div>
                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Institutional Selling Price (₹)</label>
+                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Medical Selling Price (₹)</label>
                     <input type="number" name="sellingPrice" value={formData.sellingPrice} onChange={handleChange} className="admin-input h-14 text-xl font-black text-brand-green" />
                  </div>
 

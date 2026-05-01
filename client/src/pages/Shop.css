@@ -3,9 +3,9 @@
   --green-50:   #F0FDF9;
   --green-100:  #DCFCEE;
   --green-200:  #BBF7E2;
-  --green-500:  #059669;
-  --green-600:  #024F3A;
-  --green-700:  #013829;
+  --green-500:  #00C853;
+  --green-600:  #00A344;
+  --green-700:  #008035;
   
   /* Accent */
   --amber-50:   #FFFBEB;
@@ -282,8 +282,7 @@
 .category-pills-container {
   background: white;
   border-bottom: 1px solid var(--gray-100);
-  position: sticky;
-  top: var(--navbar-height, 120px);
+  position: relative;
   z-index: 40;
   box-shadow: 0 1px 0 var(--gray-100);
 }
@@ -349,8 +348,7 @@
 
 /* ━━━ 5. REFINEMENT BAR (Horizontal) ━━━ */
 .shop-refinement-bar {
-  position: sticky;
-  top: calc(var(--navbar-height, 120px) + 53px);
+  position: relative;
   z-index: 30;
   transition: all 300ms var(--ease);
 }

@@ -211,7 +211,7 @@ const CompanyDetail = () => {
       <section className="container mx-auto px-6 mt-40">
          <div className="bg-neutral-50 rounded-[3rem] p-12 md:p-20 grid grid-cols-1 lg:grid-cols-2 gap-20">
             <div className="space-y-8">
-               <h2 className="text-3xl font-black text-neutral-900 tracking-tight">Institutional Registry</h2>
+               <h2 className="text-3xl font-black text-neutral-900 tracking-tight">Medical Registry</h2>
                <div className="space-y-6">
                   <div className="flex items-start gap-4">
                      <MapPin className="text-neutral-300 mt-1" size={20} />
@@ -225,7 +225,7 @@ const CompanyDetail = () => {
                      <div>
                         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-1">Digital Presence</p>
                         <a href={company.website} target="_blank" className="text-sm font-black text-neutral-900 hover:text-emerald-600 transition-colors flex items-center gap-1">
-                           {company.website || 'Direct Institutional Supply'} <ArrowUpRight size={14} />
+                           {company.website || 'Direct Medical Supply'} <ArrowUpRight size={14} />
                         </a>
                      </div>
                   </div>

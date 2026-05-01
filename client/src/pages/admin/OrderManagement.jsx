@@ -18,7 +18,10 @@ import {
     Plus,
     AlertCircle,
     ShieldCheck,
-    RefreshCw
+    RefreshCw,
+    Activity,
+    X,
+    ArrowRight
 } from 'lucide-react';
 import { Badge } from '../../components/ui';
 import { motion, AnimatePresence } from 'framer-motion';

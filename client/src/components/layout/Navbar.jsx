@@ -32,7 +32,6 @@ const Navbar = () => {
   const { totalItems } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showAnnouncement, setShowAnnouncement] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -70,7 +69,7 @@ const Navbar = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 80);
+    const handleScroll = () => setIsScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -86,9 +85,9 @@ const Navbar = () => {
 
   // Dynamic Layout Coupling Fix
   useEffect(() => {
-    const totalHeight = UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT + (showAnnouncement ? UI_CONSTANTS.ANNOUNCEMENT_HEIGHT : 0);
-    document.documentElement.style.setProperty('--navbar-height', `${totalHeight}px`);
-  }, [showAnnouncement]);
+    const currentHeight = isScrolled ? 54 : 60;
+    document.documentElement.style.setProperty('--navbar-height', `${currentHeight}px`);
+  }, [isScrolled]);
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -98,77 +97,31 @@ const Navbar = () => {
     { name: 'Offers', path: '/offers' }
   ];
 
+  const textColor = (isHome && !isScrolled) ? "text-white" : "text-neutral-900";
+
   return (
     <header className="fixed top-0 w-full z-[100] font-display">
-      {/* 🔝 Announcement Bar: SCROLLING HIGH-TRUST MARQUEE */}
-      <AnimatePresence>
-        {showAnnouncement && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: UI_CONSTANTS.ANNOUNCEMENT_HEIGHT }}
-            exit={{ height: 0 }}
-            className="bg-brand-primary text-white relative overflow-hidden"
-          >
-            <div className="h-full flex items-center relative whitespace-nowrap overflow-hidden">
-              <div className="flex animate-marquee hover:[animation-play-state:paused]">
-                {[1, 2, 3, 4].map((_, i) => (
-                  <div key={i} className="flex items-center gap-12 px-12">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">Free Delivery on all orders above ₹500</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 bg-white/50 rounded-full" />
-                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">100% Genuine Clinical Grade Medicines</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 bg-white/50 rounded-full" />
-                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">Verified by Licensed Pharmacists</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 bg-white/50 rounded-full" />
-                      <span className="text-[10px] font-black tracking-[0.2em] uppercase">24/7 Expert Support Available</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Fade Overlays */}
-              <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-brand-primary to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-brand-primary to-transparent z-10 pointer-events-none" />
-              
-              {/* Close Button */}
-              <button
-                onClick={() => setShowAnnouncement(false)}
-                className="absolute right-4 p-1 hover:bg-white/20 rounded-full transition-colors z-20"
-              >
-                <X size={12} className="text-white opacity-80" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 🔝 Main Navbar: FROSTED GLASS HUB */}
+      {/* 🔝 Main Navbar: ULTRA-CLEAR GLASS (NO ANNOUNCEMENT) */}
       <nav className={cn(
-        "w-full transition-all duration-300",
-        `h-[${UI_CONSTANTS.NAVBAR_HEIGHT_DEFAULT}px]`,
-        isMobileMenuOpen ? "bg-neutral-950" : "bg-white/72 backdrop-blur-[32px] saturate-[180%] shadow-[0_4px_30px_rgba(0,0,0,0.03)] text-neutral-900"
+        "w-full transition-all duration-500 ease-in-out border-b",
+        isMobileMenuOpen ? "bg-neutral-950" : "bg-white/5 backdrop-blur-[40px] saturate-[200%]",
+        isScrolled ? "h-[54px] border-white/10 shadow-lg" : "h-[60px] border-white/5 shadow-none",
+        textColor
       )}>
         <div className="container-custom h-full flex items-center justify-between">
-          <Logo isScrolled={isScrolled} isHome={isHome} className="shrink-0" />
+          <Logo isScrolled={isScrolled} isHome={isHome} className="shrink-0 scale-90 origin-left" />
 
           {/* CENTER: HIGH-CONVERSION LINKS */}
-          <div className="hidden lg:flex items-center gap-12">
+          <div className="hidden lg:flex items-center gap-10">
             {navLinks.map(link => (
               <NavLink
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) => cn(
-                  "text-[14px] font-medium transition-all px-2 py-1 relative",
+                  "text-[13px] font-medium transition-all px-2 py-1 relative",
                   isActive 
                     ? "text-brand-primary font-black" 
-                    : "text-neutral-600 hover:text-brand-primary"
+                    : "hover:text-brand-primary"
                 )}
               >
                 {link.name}
@@ -184,19 +137,19 @@ const Navbar = () => {
           </div>
 
           {/* RIGHT: ACTION CLUSTER */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Search Toggle */}
             <button
               onClick={() => setShowSearchOverlay(true)}
-              className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 text-neutral-600 hover:bg-neutral-50"
+              className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 hover:bg-white/10"
             >
-              <Search size={20} strokeWidth={2.5} />
+              <Search size={18} strokeWidth={2.5} />
             </button>
 
             {/* Cart with Spring Notification */}
             <Link to="/cart" className="relative group">
-              <div className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 text-neutral-700 hover:bg-neutral-50">
-                <ShoppingCart size={22} strokeWidth={2.5} />
+              <div className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 hover:bg-white/10">
+                <ShoppingCart size={20} strokeWidth={2.5} />
               </div>
               <AnimatePresence>
                 {cartCount > 0 && (
@@ -205,7 +158,7 @@ const Navbar = () => {
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                     transition={{ type: 'spring', damping: 12, stiffness: 400 }}
-                    className="absolute -top-1 -right-1 w-[18px] h-[18px] bg-danger text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+                    className="absolute -top-1 -right-1 w-[16px] h-[16px] bg-danger text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm"
                   >
                     {cartCount}
                   </motion.span>
@@ -214,13 +167,12 @@ const Navbar = () => {
             </Link>
 
             {/* Auth Buttons */}
-            <div className="hidden md:flex items-center gap-3 ml-2">
+            <div className="hidden md:flex items-center gap-2 ml-1">
               {isAuthenticated ? (
-                <div className="flex items-center gap-3">
-
-                  <Link to="/profile" className="flex items-center gap-2.5 pl-3 pr-1.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-all group border border-neutral-200/50">
-                    <span className="text-[13px] font-bold text-neutral-800">{user?.name ? user.name.split(' ')[0] : 'Account'}</span>
-                    <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold shadow-md shadow-brand-600/20 group-hover:scale-105 transition-transform">
+                <div className="flex items-center gap-2">
+                  <Link to="/profile" className="flex items-center gap-2.5 px-2 py-1 transition-all group">
+                    <span className="text-[12px] font-bold group-hover:text-brand-primary transition-colors">{user?.name ? user.name.split(' ')[0] : 'Account'}</span>
+                    <div className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
                       {user?.name ? user.name.charAt(0) : <User size={14} />}
                     </div>
                   </Link>
@@ -229,13 +181,16 @@ const Navbar = () => {
                 <>
                   <button
                     onClick={() => navigate('/login')}
-                    className="h-10 px-6 rounded-full text-[14px] font-semibold transition-all border text-neutral-700 border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300"
+                    className={cn(
+                      "h-8 px-4 rounded-full text-[12px] font-semibold transition-all border",
+                      (isHome && !isScrolled) ? "border-white/20 text-white hover:bg-white/10" : "border-neutral-200 text-neutral-700 hover:bg-neutral-50"
+                    )}
                   >
                     Login
                   </button>
                   <button
                     onClick={() => navigate('/register')}
-                    className="h-10 px-6 bg-brand-primary hover:bg-brand-primary-dark text-white rounded-full text-[14px] font-semibold transition-all shadow-green transform hover:-translate-y-0.5 active:translate-y-0"
+                    className="h-8 px-4 bg-brand-primary hover:bg-brand-primary-dark text-white rounded-full text-[12px] font-semibold transition-all shadow-green transform hover:-translate-y-0.5 active:translate-y-0"
                   >
                     Sign Up
                   </button>
@@ -245,10 +200,10 @@ const Navbar = () => {
 
             {/* Mobile Menu Toggle */}
             <button
-              className="lg:hidden p-2 transition-colors rounded-full text-neutral-900 hover:bg-neutral-100"
+              className="lg:hidden p-1.5 transition-colors rounded-full hover:bg-white/10"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X size={26} className="text-white" /> : <Menu size={26} />}
+              {isMobileMenuOpen ? <X size={24} className="text-white" /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -296,7 +251,6 @@ const Navbar = () => {
             <div className="p-8 space-y-4 border-t border-white/10 bg-neutral-950/50 backdrop-blur-xl">
               {isAuthenticated ? (
                 <div className="flex flex-col gap-4">
-
                   <button
                     onClick={logout}
                     className="w-full h-14 bg-white/5 text-danger font-bold rounded-2xl flex items-center justify-center gap-3 border border-danger/20"

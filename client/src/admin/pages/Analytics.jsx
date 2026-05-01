@@ -37,7 +37,7 @@ const categorySales = [
   { name: 'Injections', value: 10 },
 ];
 
-const COLORS = ['#024F3A', '#059669', '#34D399', '#BBF7E2', '#DCFCEE'];
+const COLORS = ['#00C853', '#00A344', '#34D399', '#BBF7E2', '#DCFCEE'];
 
 import { adminService } from '../../services/api';
 
@@ -127,16 +127,16 @@ const Analytics = () => {
               <AreaChart data={stats.revenueChart || []}>
                 <defs>
                   <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#024F3A" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#024F3A" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#00C853" stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor="#00C853" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748B', fontWeight: 600}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748B', fontWeight: 600}} />
                 <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }} />
-                <Area type="monotone" dataKey="revenue" stroke="#024F3A" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" />
-                <Area type="monotone" dataKey="orders" stroke="#15803D" strokeWidth={4} fillOpacity={0.1} fill="#15803D" strokeDasharray="5 5" />
+                <Area type="monotone" dataKey="revenue" stroke="#00C853" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" />
+                <Area type="monotone" dataKey="orders" stroke="#00A344" strokeWidth={4} fillOpacity={0.1} fill="#00A344" strokeDasharray="5 5" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -194,7 +194,7 @@ const Analytics = () => {
                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748B', fontWeight: 600}} />
                 <YAxis axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748B', fontWeight: 600}} />
                 <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }} />
-                <Bar dataKey="users" fill="#024F3A" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="users" fill="#00C853" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

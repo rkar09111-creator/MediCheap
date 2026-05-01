@@ -61,7 +61,7 @@ const Customers = () => {
         ltv: `₹${u.walletBalance || 0}`, // Placeholder for real LTV
         lastActive: 'Active Now', // Placeholder
         joined: new Date(u.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-        avatar: u.name.split(' ').map(n => n[0]).join(''),
+        avatar: u.name?.split(' ').map(n => n?.[0] || '').join('') || 'U',
         pass: '••••••••'
       }));
       setCustomers(transformed);
@@ -193,7 +193,7 @@ const Customers = () => {
               <div className="flex-1 overflow-y-auto p-8 space-y-10">
                 {/* CORE IDENTITY DATA */}
                 <div className="space-y-6">
-                  <h4 className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-admin-border pb-2">Institutional Identity</h4>
+                  <h4 className="text-[11px] font-black text-neutral-400 uppercase tracking-[0.2em] border-b border-admin-border pb-2">Clinical Identity</h4>
                   <div className="grid gap-4">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                         <div>

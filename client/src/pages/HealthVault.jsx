@@ -91,7 +91,7 @@ const HealthVault = () => {
   );
 
   return (
-    <div className="min-h-screen bg-transparent pb-20 selection:bg-brand-600/10">
+    <div className="bg-transparent selection:bg-brand-600/10">
       <div className="w-full max-w-full">
         {/* HEADER: SIMPLE & CLEAR */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">

@@ -79,6 +79,7 @@ import RiderDashboard from './pages/rider/Dashboard';
 import NavigationMap from './pages/rider/NavigationMap';
 import { SocketProvider } from './providers/SocketProvider';
 import AnalyticsTracker from './components/common/AnalyticsTracker';
+import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 
 import { useAuthStore } from './store/authStore';
 import { useSettingsStore } from './store/settingsStore';
@@ -155,16 +156,32 @@ const PageWrapper = ({ children }) => {
 import UserLayout from './components/layout/UserLayout';
 
 const App = () => {
-  const { getMe } = useAuthStore();
-  const { fetchSettings } = useSettingsStore();
+  const { getMe, isInitialized } = useAuthStore();
+  const { fetchSettings, isLoaded } = useSettingsStore();
   
   useEffect(() => {
     getMe();
     fetchSettings();
   }, [getMe, fetchSettings]);
 
+  if (!isInitialized || !isLoaded) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-white gap-8 font-body">
+        <div className="relative">
+          <div className="w-20 h-20 border-[3px] border-emerald-50 rounded-full animate-pulse" />
+          <div className="absolute inset-0 w-20 h-20 border-t-[3px] border-emerald-500 rounded-full animate-spin" />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] animate-pulse">Initializing Application</p>
+          <p className="text-[11px] font-bold text-slate-300">Connecting to Pharmacy Services...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <HelmetProvider>
+    <ErrorBoundary>
+      <HelmetProvider>
       <BrowserRouter>
         <AnalyticsTracker />
         <Helmet>
@@ -245,10 +262,9 @@ const App = () => {
                 <Route path="map" element={<NavigationMap />} />
               </Route>
 
-              {/* 🏥 CLINICAL USER TERMINAL (Unified Layout) */}
+              {/* 🏥 SECURE USER DASHBOARD (Unified Layout) */}
               <Route element={<UserLayout />}>
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/orders" element={<MyOrders />} />
                 <Route path="/health-vault" element={<HealthVault />} />
                 <Route path="/subscriptions" element={<SubscriptionHub />} />
               </Route>
@@ -261,9 +277,10 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                 <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                 <Route path="/payment/upi/:orderId" element={<ProtectedRoute><UpiPayment /></ProtectedRoute>} />
-                <Route path="/track/:id" element={<TrackOrder />} />
+                <Route path="/track-order/:id" element={<TrackOrder />} />
                 <Route path="/upload-prescription" element={<UploadPrescription />} />
                 <Route path="/offers" element={<Offers />} />
                 
@@ -277,6 +294,7 @@ const App = () => {
         </div>
       </BrowserRouter>
     </HelmetProvider>
+    </ErrorBoundary>
   );
 };
 

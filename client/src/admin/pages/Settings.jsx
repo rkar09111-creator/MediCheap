@@ -68,7 +68,7 @@ const Settings = () => {
     return (
         <div className="p-32 flex flex-col items-center justify-center gap-4">
             <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Institutional Config...</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Accessing Clinical Configuration...</p>
         </div>
     );
   }
@@ -190,7 +190,7 @@ const Settings = () => {
                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
-                        <span className="text-[8px] font-bold uppercase tracking-widest text-white/80">Institutional Feed</span>
+                        <span className="text-[8px] font-bold uppercase tracking-widest text-white/80">System Feed</span>
                       </div>
                       <p className="text-[10px] font-bold text-white uppercase tracking-widest">Purity Assurance Scan</p>
                    </div>

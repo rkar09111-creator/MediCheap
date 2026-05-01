@@ -94,8 +94,8 @@ const MedicineCard = ({ product }) => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ y: -4 }}
-            className="bg-white rounded-lg border border-neutral-100 shadow-card hover:shadow-hover hover:border-primary-300 transition-all duration-300 group overflow-hidden flex flex-col h-full"
+            whileHover={{ y: -8 }}
+            className="bg-white rounded-[2rem] border border-neutral-100 shadow-card hover:shadow-2xl hover:border-brand-primary/30 transition-all duration-500 group overflow-hidden flex flex-col h-full relative"
         >
             <div className="h-48 bg-neutral-50 p-6 relative flex items-center justify-center overflow-hidden">
                 <motion.img
@@ -105,17 +105,24 @@ const MedicineCard = ({ product }) => {
                     className="h-full object-contain transition-transform duration-500"
                 />
 
-                {product.discountPercentage > 0 && (
-                    <div className="absolute top-3 left-3 bg-danger text-white text-[11px] font-bold px-2 py-1 rounded-sm">
-                        -{product.discountPercentage}% OFF
+                <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
+                    {product.discountPercentage > 0 && (
+                        <div className="bg-brand-primary text-white text-[9px] font-black px-2 py-1 rounded-lg shadow-lg shadow-brand-primary/20 tracking-widest uppercase">
+                            -{product.discountPercentage}% OFF
+                        </div>
+                    )}
+                    <div className="flex gap-1">
+                        {product.requiresPrescription ? (
+                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-600 text-[9px] font-black px-2 py-1 rounded-md backdrop-blur-md">Rx</div>
+                        ) : (
+                            <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-[9px] font-black px-2 py-1 rounded-md backdrop-blur-md">OTC</div>
+                        )}
+                        <div className="bg-neutral-900/10 border border-neutral-900/10 text-neutral-900 text-[9px] font-black px-2 py-1 rounded-md backdrop-blur-md flex items-center gap-1">
+                            <ShieldCheck size={10} strokeWidth={2.5} />
+                            Verified
+                        </div>
                     </div>
-                )}
-
-                {product.requiresPrescription && (
-                    <div className="absolute top-3 right-3 bg-accent-100 text-accent-500 text-[11px] font-bold px-2 py-1 rounded-sm">
-                        Rx
-                    </div>
-                )}
+                </div>
 
                 <button
                     onClick={() => setIsWishlisted(!isWishlisted)}
@@ -216,52 +223,73 @@ const ReviewCard = ({ review }) => (
         </div>
     </div>
 );
-
 const FloatingProduct = ({ product, index }) => {
-    if (!product) return null;
+    // If product is missing during hydration, use internal clinical fallbacks to prevent "empty region"
+    const fallbackProducts = [
+        { name: 'Crocin Advanced', brand: 'GSK', sellingPrice: 45, images: [{ url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400' }], averageRating: 4.9 },
+        { name: 'Augmentin Duo', brand: 'Pfizer', sellingPrice: 180, images: [{ url: 'https://images.unsplash.com/photo-1576073719710-418242273944?w=400' }], averageRating: 4.7 },
+        { name: 'Vitamin D3', brand: 'MediCheap', sellingPrice: 165, images: [{ url: 'https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?w=400' }], averageRating: 4.8 }
+    ];
+
+    const displayProduct = product || fallbackProducts[index % 3];
+    if (!displayProduct) return null;
     
     // Different float variants for variety
     const variants = [
-        { y: [0, -25, 0], x: [0, 10, 0], rotate: [-4, -8, -4] },
-        { y: [0, 20, 0], x: [0, -15, 0], rotate: [2, 6, 2] },
-        { y: [0, -15, 0], x: [0, 12, 0], rotate: [0, -4, 0] }
+        { 
+            y: [0, -30, 0], 
+            x: [0, 15, 0], 
+            rotate: [-4, -8, -4],
+            transition: { duration: 7, repeat: Infinity, ease: "easeInOut" }
+        },
+        { 
+            y: [0, 25, 0], 
+            x: [0, -20, 0], 
+            rotate: [2, 8, 2],
+            transition: { duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1 }
+        },
+        { 
+            y: [0, -20, 0], 
+            x: [0, 18, 0], 
+            rotate: [0, -6, 0],
+            transition: { duration: 8, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+        }
     ];
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
-                opacity: 1, 
-                scale: 1,
                 ...variants[index % 3]
             }}
-            transition={{ 
-                opacity: { duration: 1, delay: index * 0.3 },
-                scale: { duration: 1, delay: index * 0.3 },
-                y: { duration: 6 + index, repeat: Infinity, ease: "easeInOut" },
-                x: { duration: 5 + index, repeat: Infinity, ease: "easeInOut" },
-                rotate: { duration: 7 + index, repeat: Infinity, ease: "easeInOut" }
+            whileHover={{ 
+                scale: 1.05, 
+                rotate: 0, 
+                zIndex: 50,
+                transition: { duration: 0.3 } 
             }}
-            className="bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20 w-56 group cursor-pointer"
+            className="bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-white/20 w-52 group cursor-pointer transition-shadow duration-500"
+            style={{ 
+                boxShadow: "0 20px 50px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.02)"
+            }}
         >
-            <div className="aspect-square bg-neutral-50 rounded-xl mb-3 overflow-hidden relative">
+            <div className="aspect-square bg-neutral-50 rounded-xl mb-3 overflow-hidden relative group-hover:shadow-inner transition-shadow">
                 <img 
-                    src={product.images?.[0]?.url || product.images?.[0] || '/med-placeholder.png'} 
-                    alt={product.name}
+                    src={displayProduct.images?.[0]?.url || displayProduct.images?.[0] || '/med-placeholder.png'} 
+                    alt={displayProduct.name}
                     className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
             </div>
             <div className="space-y-1">
                 <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{product.brand}</span>
+                    <span className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{displayProduct.brand}</span>
                     <div className="flex items-center gap-1 bg-primary-50 px-1.5 py-0.5 rounded text-[10px] font-bold text-primary-600">
-                        <Star size={8} fill="currentColor" /> {product.averageRating || 4.8}
+                        <Star size={8} fill="currentColor" /> {displayProduct.averageRating || 4.8}
                     </div>
                 </div>
-                <h4 className="font-display font-bold text-[13px] text-neutral-900 leading-tight line-clamp-1">{product.name}</h4>
+                <h4 className="font-display font-bold text-[13px] text-neutral-900 leading-tight line-clamp-1">{displayProduct.name}</h4>
                 <div className="flex items-center justify-between pt-1">
-                    <span className="font-price font-extrabold text-sm text-neutral-900">₹{product.sellingPrice}</span>
+                    <span className="font-price font-extrabold text-sm text-neutral-900">₹{displayProduct.sellingPrice}</span>
                     <div className="w-6 h-6 rounded-full bg-primary-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 transition-transform">
                         <Plus size={14} />
                     </div>
@@ -312,31 +340,14 @@ const Home = () => {
                     floatingProductsData = featuredRes.data?.data?.medicines || [];
                 }
 
-                // Fallback for demo if still empty
-                if (floatingProductsData.length === 0) {
-                    floatingProductsData = [
-                        {
-                            name: 'Crocin Advanced 500mg',
-                            brand: 'GSK',
-                            sellingPrice: 45,
-                            images: [{ url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=600' }],
-                            averageRating: 4.9
-                        },
-                        {
-                            name: 'Augmentin Duo 625',
-                            brand: 'Pfizer',
-                            sellingPrice: 180,
-                            images: [{ url: 'https://images.unsplash.com/photo-1576073719710-418242273944?auto=format&fit=crop&q=80&w=600' }],
-                            averageRating: 4.7
-                        },
-                        {
-                            name: 'Vitamin D3 60K',
-                            brand: 'MediCheap',
-                            sellingPrice: 165,
-                            images: [{ url: 'https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?auto=format&fit=crop&q=80&w=600' }],
-                            averageRating: 4.8
-                        }
+                // FINAL FAILSAFE: If still empty, use hardcoded clinical assets
+                if (floatingProductsData.length < 3) {
+                    const fallbacks = [
+                        { name: 'Crocin Advanced', brand: 'GSK', sellingPrice: 45, images: [{ url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400' }], averageRating: 4.9 },
+                        { name: 'Augmentin Duo', brand: 'Pfizer', sellingPrice: 180, images: [{ url: 'https://images.unsplash.com/photo-1576073719710-418242273944?w=400' }], averageRating: 4.7 },
+                        { name: 'Vitamin D3', brand: 'MediCheap', sellingPrice: 165, images: [{ url: 'https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?w=400' }], averageRating: 4.8 }
                     ];
+                    floatingProductsData = [...floatingProductsData, ...fallbacks.slice(0, 3 - floatingProductsData.length)];
                 }
                 setFloatingProducts(floatingProductsData);
             } catch (error) {
@@ -366,28 +377,24 @@ const Home = () => {
     return (
         <div className="bg-white overflow-hidden">
             {/* Hero Section */}
-            <section className="relative bg-neutral-950 pt-32 pb-24 md:pt-48 md:pb-40 overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: "radial-gradient(#024F3A 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-                <div className="absolute top-1/2 right-0 w-[600px] h-[400px] bg-brand-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
+            <section className="relative bg-neutral-950 pt-16 pb-12 md:pt-20 md:pb-24 overflow-hidden">
+                {/* Background Glow (Blue-ish tone to match "blue box" perception) */}
+                <div className="absolute top-1/2 right-0 w-[600px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
 
                 <div className="container-custom relative z-10 grid lg:grid-cols-2 gap-16 items-center">
                     {/* Left Column */}
-                    <div className="space-y-8 max-w-2xl">
+                    <div className="space-y-5 max-w-2xl">
 
 
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-5xl md:text-6xl lg:text-[72px] font-display font-extrabold text-white leading-[1.05] tracking-tight"
+                            className="text-4xl md:text-5xl lg:text-[56px] font-display font-extrabold text-white leading-[1.05] tracking-tight"
                         >
                             Genuine Medicines <br />
                             <span className="text-primary-500 relative">
                                 At Honest Prices
-                                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 358 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 9C118.5 3 239.5 3 355 9" stroke="#024F3A" strokeWidth="6" strokeLinecap="round" />
-                                </svg>
                             </span>
                         </motion.h1>
 
@@ -395,7 +402,7 @@ const Home = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="text-lg md:text-xl text-neutral-400 font-medium max-w-lg leading-relaxed"
+                            className="text-base md:text-lg text-neutral-400 font-medium max-w-lg leading-relaxed"
                         >
                             Skip the queue. Order from our licensed pharmacy and get doorstep delivery — same day.
                         </motion.p>
@@ -404,7 +411,7 @@ const Home = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="space-y-4"
+                            className="space-y-3"
                         >
                             <form
                                 onSubmit={(e) => { e.preventDefault(); if (searchQuery) navigate(`/shop?search=${searchQuery}`); }}
@@ -442,7 +449,7 @@ const Home = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
-                            className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4"
+                            className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2"
                         >
                             <span className="text-sm font-medium text-neutral-400">50,000+ Orders Delivered</span>
                             <span className="w-1.5 h-1.5 rounded-full bg-neutral-700" />
@@ -453,27 +460,27 @@ const Home = () => {
                     </div>
 
                     {/* Right Column - PREMIUM FLOATING CLINICAL NODE */}
-                    <div className="hidden lg:block relative h-[600px]">
+                    <div className="flex items-center justify-center relative h-[480px] w-full">
                         {/* THE 3 FLOATING MEDICINES */}
                         
                         {/* 1. Top Left Floating Card */}
-                        <div className="absolute top-0 left-0 z-30">
+                        <div className="absolute top-4 left-4 z-30">
                             <FloatingProduct product={floatingProducts[0]} index={0} />
                         </div>
-
+ 
                         {/* 2. Middle Right Floating Card */}
-                        <div className="absolute top-1/2 -right-4 -translate-y-1/2 z-20">
+                        <div className="absolute top-1/2 right-4 -translate-y-1/2 z-20">
                             <FloatingProduct product={floatingProducts[1]} index={1} />
                         </div>
-
+ 
                         {/* 3. Bottom Center Floating Card */}
-                        <div className="absolute -bottom-10 left-32 z-40">
+                        <div className="absolute bottom-4 left-1/4 z-40">
                             <FloatingProduct product={floatingProducts[2]} index={2} />
                         </div>
                         
-                        {/* Decorative Glows */}
-                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-500/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-                        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-brand-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
+                        {/* Subdued Decorative Glows */}
+                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+                        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
                     </div>
                 </div>
             </section>
@@ -505,7 +512,7 @@ const Home = () => {
                 <div className="container-custom">
                     <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-12">
                         <div className="space-y-2">
-                            <span className="text-primary-500 font-bold text-xs uppercase tracking-[3px]">Institutional Catalog</span>
+                            <span className="text-primary-500 font-bold text-xs uppercase tracking-[3px]">Medical Catalog</span>
                             <h2 className="text-4xl font-display font-extrabold text-neutral-900 tracking-tight">Essential Formulations</h2>
                         </div>
                         <div className="flex bg-neutral-200/50 p-1 rounded-full">

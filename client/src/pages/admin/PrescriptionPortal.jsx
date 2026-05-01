@@ -11,7 +11,13 @@ import {
     User,
     Calendar,
     ArrowRight,
-    Plus
+    Plus,
+    ShieldCheck,
+    RefreshCw,
+    Loader2,
+    ChevronRight,
+    X,
+    Activity
 } from 'lucide-react';
 import { Button, Card, Badge, cn } from '../../components/ui';
 import api from '../../services/api';

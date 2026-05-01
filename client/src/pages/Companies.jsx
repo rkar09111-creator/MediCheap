@@ -185,7 +185,7 @@ const Companies = () => {
            <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-600/10 skew-x-12 -mr-32" />
            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
               <div className="space-y-8">
-                 <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">Direct-to-Patient <br/><span className="text-emerald-500">Institutional Supply.</span></h2>
+                 <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">Direct-to-Patient <br/><span className="text-emerald-500">Medical Supply.</span></h2>
                  <p className="text-white/60 text-lg font-medium leading-relaxed">By eliminating middle-layers and working directly with brands like IGMA Ltd, we deliver fresh stock with the longest expiry dates and the most honest prices.</p>
                  <div className="flex flex-wrap gap-6 justify-center md:justify-start">
                     <div className="flex items-center gap-3">
